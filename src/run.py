@@ -14,10 +14,15 @@ Usage:
 
 import json
 import os
+import re
 import sys
+import io
+import wave
+import base64
 import argparse
+import threading
 from pathlib import Path
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from datetime import datetime
 from dataclasses import asdict
 
@@ -105,22 +110,65 @@ def call_vlm(
 
 
 # ==========================================================================
+# AUDIO API HELPER
+# ==========================================================================
+
+def call_audio_llm(api_key: str, pcm_bytes: bytes, prompt: str) -> str:
+    """
+    Transcribe audio via OpenRouter using gpt-4o-audio-preview.
+
+    Args:
+        api_key: OpenRouter API key
+        pcm_bytes: Raw PCM audio (16kHz, mono, 16-bit signed LE)
+        prompt: Text prompt for the audio model
+
+    Returns:
+        Model response text
+    """
+    # Wrap raw PCM in a WAV container
+    buf = io.BytesIO()
+    with wave.open(buf, "wb") as wf:
+        wf.setnchannels(1)
+        wf.setsampwidth(2)
+        wf.setframerate(16000)
+        wf.writeframes(pcm_bytes)
+    audio_b64 = base64.b64encode(buf.getvalue()).decode()
+
+    url = "https://openrouter.ai/api/v1/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "HTTP-Referer": "https://github.com/alcor-labs/vlm-orchestrator-eval",
+        "X-Title": "VLM Orchestrator Evaluation",
+    }
+    payload = {
+        "model": "openai/gpt-4o-audio-preview",
+        "messages": [
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": prompt},
+                    {"type": "input_audio", "input_audio": {"data": audio_b64, "format": "wav"}},
+                ],
+            }
+        ],
+    }
+    resp = requests.post(url, json=payload, headers=headers, timeout=60)
+    resp.raise_for_status()
+    return resp.json()["choices"][0]["message"]["content"]
+
+
+# ==========================================================================
 # YOUR PIPELINE — IMPLEMENT THESE CALLBACKS
 # ==========================================================================
 
+CORRECTION_KEYWORDS = {"stop", "no", "wrong", "don't", "wait", "not", "incorrect", "mistake"}
+
 class Pipeline:
     """
-    Your VLM orchestration pipeline.
+    VLM orchestration pipeline with audio transcription.
 
-    The harness calls on_frame() and on_audio() in real-time as the video plays.
-    When you detect an event, call self.harness.emit_event({...}).
-
-    Key design decisions you need to make:
-    - Which frames to send to the VLM (not every frame — budget is limited)
-    - Whether/how to use audio (speech-to-text for instructor corrections?)
-    - Which model to use and when (cheap for easy frames, expensive for hard ones?)
-    - How to track procedure state (current step, completed steps)
-    - How to generate spoken responses for errors
+    Uses Gemini 2.5 Flash for video frame analysis and GPT-4o Audio Preview
+    for instructor speech transcription. Audio corrections signal errors.
     """
 
     def __init__(self, harness: StreamingHarness, api_key: str, procedure: Dict[str, Any]):
@@ -130,54 +178,215 @@ class Pipeline:
         self.task_name = procedure.get("task") or procedure.get("task_name", "Unknown")
         self.steps = procedure["steps"]
 
-        # TODO: Initialize your pipeline state here
-        # Examples:
-        #   self.current_step = 0
-        #   self.completed_steps = set()
-        #   self.frame_buffer = []
-        #   self.last_activity_time = 0
-        #   self.api_calls = 0
-        #   self.total_cost = 0
+        # Step tracking
+        self.current_step_index = 0
+        self.completed_steps: set = set()
+
+        # Idle detection — driven by VLM "idle" responses, not timer
+        self.last_vlm_activity_time = 0.0
+        self.idle_emitted_times: set = set()
+
+        # Frame sampling
+        self.frame_count = 0
+        self.pending_calls = 0
+        self.lock = threading.Lock()
+
+        # Audio state
+        self.recent_transcript = ""
+        self.recent_transcript_time = 0.0
+        self.pending_audio_calls = 0
+        self.audio_log: list = []  # [(start_sec, end_sec, transcript)]
+
+        # Build steps text once for the prompt
+        self._steps_text = "\n".join(
+            f"  Step {s['step_id']}: {s['description']}" for s in self.steps
+        )
+
+    def _build_prompt(self, timestamp_sec: float) -> str:
+        with self.lock:
+            idx = self.current_step_index
+            transcript = self.recent_transcript
+            transcript_time = self.recent_transcript_time
+            completed = sorted(self.completed_steps)
+        current_step = self.steps[idx] if idx < len(self.steps) else None
+
+        prompt = f"""You are monitoring a technician performing: "{self.task_name}"
+
+The procedure steps are:
+{self._steps_text}
+
+Steps already completed: {completed if completed else "none yet"}
+"""
+        if current_step:
+            prompt += f"Expected current step: {current_step['step_id']} — \"{current_step['description']}\"\n\n"
+        else:
+            prompt += "All steps may be completed.\n\n"
+
+        # Include recent audio transcript if available and recent
+        if transcript and (timestamp_sec - transcript_time) < 15.0:
+            prompt += f"Recent instructor audio: \"{transcript}\"\n\n"
+
+        prompt += """Analyze this video frame. Respond ONLY with a JSON object (no markdown fences):
+{
+  "status": "step_complete" or "error" or "in_progress" or "idle",
+  "step_id": <integer step number completed or being worked on, or null>,
+  "description": "<what the person is doing>",
+  "error_description": "<if error: what went wrong. otherwise null>",
+  "confidence": <0.0 to 1.0>
+}
+
+IMPORTANT RULES:
+- You may report ANY step as complete, not just the expected current step. Steps can be completed out of order or you may have missed earlier ones.
+- Report "step_complete" ONLY when you can clearly see the step has been finished.
+- Report "error" ONLY if the technician is clearly doing something WRONG (wrong tool, wrong part, wrong sequence). NOT just because they haven't started the next step yet.
+- Report "idle" if the technician is standing still, waiting, or not actively working.
+- Default to "in_progress" if unsure."""
+        return prompt
+
+    def _parse_response(self, response: str) -> Dict[str, Any]:
+        cleaned = response.strip()
+        cleaned = re.sub(r"^```(?:json)?\s*", "", cleaned)
+        cleaned = re.sub(r"\s*```$", "", cleaned)
+        cleaned = cleaned.strip()
+
+        try:
+            return json.loads(cleaned)
+        except json.JSONDecodeError:
+            pass
+
+        # Fallback: keyword matching
+        lower = response.lower()
+        if "step_complete" in lower or "step complete" in lower:
+            step_match = re.search(r"step[_\s]*(\d+)", lower)
+            step_id = int(step_match.group(1)) if step_match else None
+            return {"status": "step_complete", "step_id": step_id, "description": response[:200], "confidence": 0.5}
+        if "error" in lower:
+            return {"status": "error", "step_id": None, "description": response[:200], "error_description": response[:200], "confidence": 0.5}
+        if "idle" in lower:
+            return {"status": "idle", "step_id": None, "description": response[:200], "confidence": 0.5}
+        return {"status": "in_progress", "step_id": None, "description": response[:200], "confidence": 0.3}
+
+    def _analyze_frame(self, timestamp_sec: float, frame_base64: str):
+        try:
+            prompt = self._build_prompt(timestamp_sec)
+            response = call_vlm(self.api_key, frame_base64, prompt)
+            parsed = self._parse_response(response)
+
+            status = parsed.get("status", "in_progress")
+            step_id = parsed.get("step_id")
+            confidence = parsed.get("confidence", 0.5)
+            description = parsed.get("description", "")
+
+            with self.lock:
+                if status == "step_complete" and step_id is not None and step_id not in self.completed_steps:
+                    self.completed_steps.add(step_id)
+                    self.last_vlm_activity_time = timestamp_sec
+
+                    # Advance step pointer — skip ahead if VLM reports a later step
+                    while (self.current_step_index < len(self.steps)
+                           and self.steps[self.current_step_index]["step_id"] <= step_id):
+                        self.completed_steps.add(self.steps[self.current_step_index]["step_id"])
+                        self.current_step_index += 1
+
+                    self.harness.emit_event({
+                        "timestamp_sec": timestamp_sec,
+                        "type": "step_completion",
+                        "step_id": step_id,
+                        "confidence": confidence,
+                        "description": description,
+                        "source": "video",
+                        "vlm_observation": response[:500],
+                    })
+
+                elif status == "error":
+                    error_desc = parsed.get("error_description", description)
+                    self.last_vlm_activity_time = timestamp_sec
+
+                    self.harness.emit_event({
+                        "timestamp_sec": timestamp_sec,
+                        "type": "error_detected",
+                        "error_type": "wrong_action",
+                        "severity": "warning",
+                        "confidence": confidence,
+                        "description": error_desc,
+                        "source": "video",
+                        "vlm_observation": response[:500],
+                        "spoken_response": f"Stop — {error_desc}",
+                    })
+
+                elif status == "idle":
+                    rounded = round(timestamp_sec, 0)
+                    if rounded not in self.idle_emitted_times:
+                        self.idle_emitted_times.add(rounded)
+                        self.harness.emit_event({
+                            "timestamp_sec": timestamp_sec,
+                            "type": "idle_detected",
+                            "confidence": confidence,
+                            "description": description,
+                            "source": "video",
+                            "vlm_observation": response[:500],
+                        })
+
+                else:
+                    # in_progress — update activity time
+                    self.last_vlm_activity_time = timestamp_sec
+
+        except Exception as e:
+            print(f"  [pipeline] VLM call failed at {timestamp_sec:.1f}s: {e}")
+        finally:
+            with self.lock:
+                self.pending_calls -= 1
+
+    def _transcribe_audio(self, audio_bytes: bytes, start_sec: float, end_sec: float):
+        try:
+            prompt = "Transcribe any speech in this audio. The audio may be pitch-shifted. If there is no speech, respond with exactly: NO_SPEECH"
+            transcript = call_audio_llm(self.api_key, audio_bytes, prompt)
+
+            clean = transcript.strip()
+            with self.lock:
+                self.audio_log.append((start_sec, end_sec, clean))
+
+            if "NO_SPEECH" in transcript.upper():
+                return
+
+            with self.lock:
+                self.recent_transcript = clean
+                self.recent_transcript_time = start_sec
+
+            print(f"  [audio] {start_sec:.1f}-{end_sec:.1f}s: {clean[:80]}")
+
+        except Exception as e:
+            print(f"  [audio] Transcription failed at {start_sec:.1f}s: {e}")
+        finally:
+            with self.lock:
+                self.pending_audio_calls -= 1
 
     def on_frame(self, frame: np.ndarray, timestamp_sec: float, frame_base64: str):
-        """
-        Called by the harness for each video frame.
+        """Called by the harness for each video frame."""
+        self.frame_count += 1
 
-        Args:
-            frame: BGR numpy array (raw frame)
-            timestamp_sec: Current video timestamp
-            frame_base64: Pre-encoded JPEG base64 string (ready for VLM API)
+        # Sample every 5th frame (~1 call per 2.5s at 2 FPS)
+        if self.frame_count % 5 != 0:
+            return
 
-        TODO: Implement your frame processing logic.
-        When you detect an event, call:
-            self.harness.emit_event({
-                "timestamp_sec": timestamp_sec,
-                "type": "step_completion",  # or "error_detected" or "idle_detected"
-                "step_id": 1,
-                "confidence": 0.9,
-                "description": "...",
-                "source": "video",
-                "vlm_observation": "...",
-                # For errors, also include:
-                "spoken_response": "Stop — you need to turn off the power first.",
-            })
-        """
-        pass  # TODO: Implement
+        # Limit concurrent VLM calls
+        with self.lock:
+            if self.pending_calls >= 2:
+                return
+            self.pending_calls += 1
+
+        thread = threading.Thread(target=self._analyze_frame, args=(timestamp_sec, frame_base64), daemon=True)
+        thread.start()
 
     def on_audio(self, audio_bytes: bytes, start_sec: float, end_sec: float):
-        """
-        Called by the harness for each audio chunk.
+        """Called by the harness for each audio chunk. Transcribes in background."""
+        with self.lock:
+            if self.pending_audio_calls >= 1:
+                return
+            self.pending_audio_calls += 1
 
-        Args:
-            audio_bytes: Raw PCM audio (16kHz, mono, 16-bit)
-            start_sec: Chunk start time in video
-            end_sec: Chunk end time in video
-
-        TODO: Implement your audio processing logic.
-        Consider: speech-to-text, keyword detection, silence detection.
-        The instructor's verbal corrections are a strong signal for errors.
-        """
-        pass  # TODO: Implement
+        thread = threading.Thread(target=self._transcribe_audio, args=(audio_bytes, start_sec, end_sec), daemon=True)
+        thread.start()
 
 
 # ==========================================================================
@@ -250,6 +459,13 @@ def main():
 
     # Save
     harness.save_results(results, args.output)
+
+    # Save audio transcript log
+    if pipeline.audio_log:
+        audio_log_path = str(Path(args.output).with_suffix("")) + "_audio.json"
+        with open(audio_log_path, "w") as f:
+            json.dump([{"start_sec": s, "end_sec": e, "transcript": t} for s, e, t in pipeline.audio_log], f, indent=2)
+        print(f"  Audio log: {audio_log_path} ({len(pipeline.audio_log)} chunks)")
 
     print()
     print(f"  Output: {args.output}")

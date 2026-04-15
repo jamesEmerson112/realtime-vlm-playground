@@ -59,3 +59,7 @@ internal/
 data/videos/
 data/videos_full/
 data/videos.zip
+videos.zip
+
+# Paper PDFs (large binary files)
+docs/papers/pdfs/
