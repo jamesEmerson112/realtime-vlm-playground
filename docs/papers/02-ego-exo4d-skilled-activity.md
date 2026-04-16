@@ -6,8 +6,9 @@ year: 2024
 shelf: "1 — Benchmark Papers"
 arxiv: "https://arxiv.org/abs/2311.18259"
 relevance: "Closest to our 'student performing skilled task' setup — has keysteps, procedural dependencies, proficiency ratings"
-chosen: false
+chosen: true
 reevaluation: "UNDERRATED — on re-read, more relevant than initially scored. The 'expert commentary' annotation (52 coaches critiquing technique) is DIRECTLY analogous to our instructor audio. Proficiency ratings = our error detection. Keystep temporal segmentation = our step tracking. Procedural dependency graphs = our procedure JSON. Consider promoting to read-closely tier. The expert commentary concept could inform how we interpret instructor corrections."
+future_research: "HIGH PRIORITY — ego+exo synchronized multiview is James's future research direction. The dataset captures simultaneous first-person and third-person video of skilled activities, exactly the multiview camera synchronization setup planned for future work."
 ---
 
 # Ego-Exo4D: Understanding Skilled Human Activity from First- and Third-Person Perspectives

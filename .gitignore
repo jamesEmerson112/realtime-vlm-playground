@@ -63,3 +63,7 @@ videos.zip
 
 # Paper PDFs (large binary files)
 docs/papers/pdfs/
+.gstack/
+
+# personal development. This will be pushed if the project is accepted
+CLAUDE.md

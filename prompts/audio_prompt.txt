@@ -1,0 +1,1 @@
+Transcribe any speech in this audio. The audio may be pitch-shifted. If there is no speech, respond with exactly: NO_SPEECH

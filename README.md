@@ -4,6 +4,20 @@
 
 ---
 
+## James Vo
+
+Zero-shot VLM pipeline via OpenRouter API, defaulting to Gemini 2.5 Flash (vision) and GPT-4o Audio Preview (audio transcription). Models are parameterized and swappable. No custom model training — the pipeline works on any procedure + video with no labeled training set.
+
+**Design philosophy:** Competitors may train task-specific models (e.g., ProTAS trains CAS, progress prediction, and task graph modules on labeled procedural video datasets) and will achieve higher benchmark scores because they are fitting to the task distribution. We deliberately chose the zero-shot API approach for generalization, zero training data requirement, and operational simplicity. Conceptual insights from the literature (task graph constraints, progress estimation) are adapted as prompt engineering and state machine logic rather than trained neural components. See `docs/Optimization.md` for the full analysis.
+
+**Key docs:**
+- `docs/SYSTEM_DESIGN.md` — 14-section system design (written before implementation)
+- `docs/Optimization.md` — ProTAS paper analysis: task graph constraints + progress prediction
+- `docs/AUDIO_BENCHMARK_FINDINGS.md` — 11-model audio benchmark across 3 videos
+- `docs/papers/` — 12 surveyed papers with 4 chosen for actionable insights
+
+---
+
 ## What You're Building
 
 A real-time procedural assistant. Given a video (with audio) of a technician performing a task and a procedure JSON describing the expected steps, your pipeline must detect:
