@@ -1,0 +1,177 @@
+{
+  "video_name": "z045-june-24-22-dslr",
+  "video_relpath": "data/videos_full/z045-june-24-22-dslr/Export_py/Video_pitchshift.mp4",
+  "video_size": 38538597,
+  "video_mtime": 1696489737.0,
+  "audio_chunk_sec": 5.0,
+  "cached_at": "2026-04-16T15:59:53.128885Z",
+  "verify_ran": true,
+  "transcripts": {
+    "0.0": "Hello. Thank you for agreeing to take part in our study.",
+    "5.0": "We'll be using it for this task.",
+    "10.0": "Detach the lens from here.",
+    "15.0": "Thank you very much. Next.",
+    "20.0": "Reattach the lens to the camera.",
+    "30.0": "Next, please remove the lens cover from the camera.",
+    "35.0": "The last cover",
+    "40.0": "Please return.",
+    "45.0": "To remove it, please squish on the two plastic brackets.",
+    "50.0": "Thank you very much. Next, please reattach the lens cap.",
+    "60.0": "Thank you very much. Next, please turn on the timer.",
+    "65.0": "Thank you very much.",
+    "70.0": "Next, please turn off the camera. Thank you very much.",
+    "75.0": "Next, please change the batteries in the camera.",
+    "90.0": "To remove the battery, please open the battery notch.",
+    "95.0": "Thank you.",
+    "110.0": "Thank you very much. Lastly, please change to the SD card and count.",
+    "130.0": "Please look at the camera a bit further from your face, such as what they have within you. Thank you.",
+    "135.0": "Thank you very much. That concludes everything for this class."
+  },
+  "audio_log": [
+    [
+      0.0,
+      5.0,
+      "Hello. Thank you for agreeing to take part in our study."
+    ],
+    [
+      5.0,
+      10.0,
+      "We'll be using it for this task."
+    ],
+    [
+      10.0,
+      15.0,
+      "Detach the lens from here."
+    ],
+    [
+      15.0,
+      20.0,
+      "Thank you very much. Next."
+    ],
+    [
+      20.0,
+      25.0,
+      "Reattach the lens to the camera."
+    ],
+    [
+      25.0,
+      30.0,
+      "NO_SPEECH"
+    ],
+    [
+      30.0,
+      35.0,
+      "Next, please remove the lens cover from the camera."
+    ],
+    [
+      35.0,
+      40.0,
+      "The last cover"
+    ],
+    [
+      40.0,
+      45.0,
+      "Please return."
+    ],
+    [
+      45.0,
+      50.0,
+      "To remove it, please squish on the two plastic brackets."
+    ],
+    [
+      50.0,
+      55.0,
+      "Thank you very much. Next, please reattach the lens cap."
+    ],
+    [
+      55.0,
+      60.0,
+      "NO_SPEECH"
+    ],
+    [
+      60.0,
+      65.0,
+      "Thank you very much. Next, please turn on the timer."
+    ],
+    [
+      65.0,
+      70.0,
+      "Thank you very much."
+    ],
+    [
+      70.0,
+      75.0,
+      "Next, please turn off the camera. Thank you very much."
+    ],
+    [
+      75.0,
+      80.0,
+      "Next, please change the batteries in the camera."
+    ],
+    [
+      80.0,
+      85.0,
+      "NO_SPEECH"
+    ],
+    [
+      85.0,
+      90.0,
+      "NO_SPEECH"
+    ],
+    [
+      90.0,
+      95.0,
+      "To remove the battery, please open the battery notch."
+    ],
+    [
+      95.0,
+      100.0,
+      "Thank you."
+    ],
+    [
+      100.0,
+      105.0,
+      "NO_SPEECH"
+    ],
+    [
+      105.0,
+      110.0,
+      "NO_SPEECH"
+    ],
+    [
+      110.0,
+      115.0,
+      "Thank you very much. Lastly, please change to the SD card and count."
+    ],
+    [
+      115.0,
+      120.0,
+      "NO_SPEECH"
+    ],
+    [
+      120.0,
+      125.0,
+      "NO_SPEECH"
+    ],
+    [
+      125.0,
+      130.0,
+      "NO_SPEECH"
+    ],
+    [
+      130.0,
+      135.0,
+      "Please look at the camera a bit further from your face, such as what they have within you. Thank you."
+    ],
+    [
+      135.0,
+      140.0,
+      "Thank you very much. That concludes everything for this class."
+    ],
+    [
+      140.0,
+      143.42614084960195,
+      "NO_SPEECH"
+    ]
+  ]
+}

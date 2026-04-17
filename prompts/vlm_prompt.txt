@@ -1,37 +1,24 @@
-You are monitoring a technician performing: "{task_name}"
-Camera: FIRST-PERSON (egocentric) — mounted on the technician's head.
-Current video time: {timestamp_sec}s
-
-Steps already completed: {completed_steps}
+Egocentric camera on a technician performing: "{task_name}" (t={timestamp_sec}s)
 
 {current_step_block}
 {next_step_block}
-
+{previous_frame}
 {audio_line}
-FOCUS YOUR ANALYSIS ON:
-1. What are the technician's HANDS doing?
-2. What OBJECTS/TOOLS are visible and in what state?
-3. Does the scene match the END-STATE described in CURRENT step?
-4. Is there any visible mistake right now?
+Audio above is the transcription of what maybe happening in the scene.
 
-Respond ONLY with a JSON object (no markdown fences):
+Describe THIS frame only.
+- current_step_happening: does the scene match the CURRENT step's action?
+- current_step_just_completed: is the CURRENT step's END-STATE visible (part in place, switch flipped, door closed)?
+- next_step_starting: are hands/body pivoting to the NEXT step's target?
+
+Respond with JSON (no fences):
 {{
-  "hands": "<what the hands are doing/holding>",
-  "objects": "<key objects and their states>",
-  "action": "<overall action>",
-  "visual_cues": ["<cue1>", "<cue2>"],
-  "end_state_visible": "yes" | "no" | "unclear",
-  "heard_in_audio_matches_current_step": true | false,
-  "current_step_progress_pct": <integer 0-100, your estimate of how much of the CURRENT step is visibly complete; 0 = not started, 50 = halfway, 100 = done>,
-  "error_visible": "<description or null>",
-  "confidence": <0.0 to 1.0>
+    "current_step_happening": "yes" | "no",
+    "current_step_just_completed": true | false,
+    "next_step_starting": true | false,
+    "hands_active": true | false,
+    "error_visible": "<mistake description>" | null,
+    "error_type": "wrong_action" | "wrong_sequence" | "safety_violation" | "improper_technique" | "other" | null,
+    "confidence": <0.0-1.0>,
+    "description": "<what is the technician doing?>"
 }}
-
-RULES:
-- Describe what you SEE. Do not infer, predict, or guess what will happen next.
-- Blurry frames or camera motion are NOT errors.
-- Report "end_state_visible: yes" only when the scene clearly shows the finished state of the CURRENT step.
-- current_step_progress_pct must be an integer 0-100. Anchor: 0 = no visible progress on the current step, 25 = starting, 50 = meaningfully underway, 75 = almost done, 90-100 = end-state visible now. Use this continuously — do NOT jump straight from 0 to 100.
-- If the frame is unclear, use "unclear" for end_state_visible and keep progress conservative (no sudden jumps).
-- If hands are not visible in this frame, say so — do not fabricate details.
-- Set "error_visible" to null unless a specific mistake is clearly visible right now.

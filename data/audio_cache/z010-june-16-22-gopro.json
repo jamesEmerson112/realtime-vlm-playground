@@ -1,0 +1,641 @@
+{
+  "video_name": "z010-june-16-22-gopro",
+  "video_relpath": "data/videos_full/z010-june-16-22-gopro/Export_py/Video_pitchshift.mp4",
+  "video_size": 152878768,
+  "video_mtime": 1696489793.0,
+  "audio_chunk_sec": 5.0,
+  "cached_at": "2026-04-16T14:54:11.934400Z",
+  "verify_ran": true,
+  "transcripts": {
+    "0.0": "So we're now going to operate the GoPro.",
+    "5.0": "So please change the battery.",
+    "20.0": "There should be a little...",
+    "35.0": "On the right hand side",
+    "40.0": "And then you can open it like a door hinge.",
+    "45.0": "The other side.",
+    "50.0": "Pull it out towards you.",
+    "55.0": "Where your left index finger is.",
+    "60.0": "Yeah, that part you just pull out, so to your left, towards you.",
+    "85.0": "You'll have to",
+    "120.0": "So you'll have to push down the edge of the hinge first.",
+    "125.0": "So you'll have to keep it off.",
+    "130.0": "And the cheddar...",
+    "155.0": "and then press.",
+    "160.0": "The next step is to change the microwave.",
+    "170.0": "And the hinge actually",
+    "205.0": "The next step is to turn on the GoPro.",
+    "210.0": "That's actually the record button. You'll have to press it again to turn it off.",
+    "215.0": "On the left-hand side",
+    "220.0": "We'll wait until it's turned off.",
+    "240.0": "Now please turn off the GoPro.",
+    "250.0": "Great. The next step is to mount the go-pro onto the strap.",
+    "265.0": "Yep, so you'll have to unscrew the knob on the strap.",
+    "275.0": "Yes. And there are legs that come out.",
+    "280.0": "out of the GoPro",
+    "300.0": "If you want. Great.",
+    "310.0": "Nice. Now please change the mount from the strap to...",
+    "320.0": "So the handheld grip is on the table.",
+    "325.0": "to the dollar",
+    "395.0": "We have to put them in at the same time.",
+    "420.0": "Oh, it's actually...",
+    "425.0": "the other side",
+    "430.0": "So it seems like the knot came off.",
+    "450.0": "From the left-hand side?",
+    "495.0": "Alright.",
+    "500.0": "If there is space for the duck to go in on the other side.",
+    "505.0": "The light should be...",
+    "510.0": "Inserted on the right-hand side.",
+    "525.0": "Can you press with the nut in on the other side?",
+    "535.0": "I'm going to secure it all back.",
+    "540.0": "Great.",
+    "545.0": "Please remove the handheld grip.",
+    "580.0": "You can now stop the recording."
+  },
+  "audio_log": [
+    [
+      0.0,
+      5.0,
+      "So we're now going to operate the GoPro."
+    ],
+    [
+      5.0,
+      10.0,
+      "So please change the battery."
+    ],
+    [
+      10.0,
+      15.0,
+      "NO_SPEECH"
+    ],
+    [
+      15.0,
+      20.0,
+      "NO_SPEECH"
+    ],
+    [
+      20.0,
+      25.0,
+      "There should be a little..."
+    ],
+    [
+      25.0,
+      30.0,
+      "NO_SPEECH"
+    ],
+    [
+      30.0,
+      35.0,
+      "NO_SPEECH"
+    ],
+    [
+      35.0,
+      40.0,
+      "On the right hand side"
+    ],
+    [
+      40.0,
+      45.0,
+      "And then you can open it like a door hinge."
+    ],
+    [
+      45.0,
+      50.0,
+      "The other side."
+    ],
+    [
+      50.0,
+      55.0,
+      "Pull it out towards you."
+    ],
+    [
+      55.0,
+      60.0,
+      "Where your left index finger is."
+    ],
+    [
+      60.0,
+      65.0,
+      "Yeah, that part you just pull out, so to your left, towards you."
+    ],
+    [
+      65.0,
+      70.0,
+      "NO_SPEECH"
+    ],
+    [
+      70.0,
+      75.0,
+      "NO_SPEECH"
+    ],
+    [
+      75.0,
+      80.0,
+      "NO_SPEECH"
+    ],
+    [
+      80.0,
+      85.0,
+      "NO_SPEECH"
+    ],
+    [
+      85.0,
+      90.0,
+      "You'll have to"
+    ],
+    [
+      90.0,
+      95.0,
+      "NO_SPEECH"
+    ],
+    [
+      95.0,
+      100.0,
+      "NO_SPEECH"
+    ],
+    [
+      100.0,
+      105.0,
+      "NO_SPEECH"
+    ],
+    [
+      105.0,
+      110.0,
+      "NO_SPEECH"
+    ],
+    [
+      110.0,
+      115.0,
+      "NO_SPEECH"
+    ],
+    [
+      115.0,
+      120.0,
+      "NO_SPEECH"
+    ],
+    [
+      120.0,
+      125.0,
+      "So you'll have to push down the edge of the hinge first."
+    ],
+    [
+      125.0,
+      130.0,
+      "So you'll have to keep it off."
+    ],
+    [
+      130.0,
+      135.0,
+      "And the cheddar..."
+    ],
+    [
+      135.0,
+      140.0,
+      "NO_SPEECH"
+    ],
+    [
+      140.0,
+      145.0,
+      "NO_SPEECH"
+    ],
+    [
+      145.0,
+      150.0,
+      "NO_SPEECH"
+    ],
+    [
+      150.0,
+      155.0,
+      "NO_SPEECH"
+    ],
+    [
+      155.0,
+      160.0,
+      "and then press."
+    ],
+    [
+      160.0,
+      165.0,
+      "The next step is to change the microwave."
+    ],
+    [
+      165.0,
+      170.0,
+      "NO_SPEECH"
+    ],
+    [
+      170.0,
+      175.0,
+      "And the hinge actually"
+    ],
+    [
+      175.0,
+      180.0,
+      "NO_SPEECH"
+    ],
+    [
+      180.0,
+      185.0,
+      "NO_SPEECH"
+    ],
+    [
+      185.0,
+      190.0,
+      "NO_SPEECH"
+    ],
+    [
+      190.0,
+      195.0,
+      "NO_SPEECH"
+    ],
+    [
+      195.0,
+      200.0,
+      "NO_SPEECH"
+    ],
+    [
+      200.0,
+      205.0,
+      "NO_SPEECH"
+    ],
+    [
+      205.0,
+      210.0,
+      "The next step is to turn on the GoPro."
+    ],
+    [
+      210.0,
+      215.0,
+      "That's actually the record button. You'll have to press it again to turn it off."
+    ],
+    [
+      215.0,
+      220.0,
+      "On the left-hand side"
+    ],
+    [
+      220.0,
+      225.0,
+      "We'll wait until it's turned off."
+    ],
+    [
+      225.0,
+      230.0,
+      "NO_SPEECH"
+    ],
+    [
+      230.0,
+      235.0,
+      "NO_SPEECH"
+    ],
+    [
+      235.0,
+      240.0,
+      "NO_SPEECH"
+    ],
+    [
+      240.0,
+      245.0,
+      "Now please turn off the GoPro."
+    ],
+    [
+      245.0,
+      250.0,
+      "NO_SPEECH"
+    ],
+    [
+      250.0,
+      255.0,
+      "Great. The next step is to mount the go-pro onto the strap."
+    ],
+    [
+      255.0,
+      260.0,
+      "NO_SPEECH"
+    ],
+    [
+      260.0,
+      265.0,
+      "NO_SPEECH"
+    ],
+    [
+      265.0,
+      270.0,
+      "Yep, so you'll have to unscrew the knob on the strap."
+    ],
+    [
+      270.0,
+      275.0,
+      "NO_SPEECH"
+    ],
+    [
+      275.0,
+      280.0,
+      "Yes. And there are legs that come out."
+    ],
+    [
+      280.0,
+      285.0,
+      "out of the GoPro"
+    ],
+    [
+      285.0,
+      290.0,
+      "NO_SPEECH"
+    ],
+    [
+      290.0,
+      295.0,
+      "NO_SPEECH"
+    ],
+    [
+      295.0,
+      300.0,
+      "NO_SPEECH"
+    ],
+    [
+      300.0,
+      305.0,
+      "If you want. Great."
+    ],
+    [
+      305.0,
+      310.0,
+      "NO_SPEECH"
+    ],
+    [
+      310.0,
+      315.0,
+      "Nice. Now please change the mount from the strap to..."
+    ],
+    [
+      315.0,
+      320.0,
+      "NO_SPEECH"
+    ],
+    [
+      320.0,
+      325.0,
+      "So the handheld grip is on the table."
+    ],
+    [
+      325.0,
+      330.0,
+      "to the dollar"
+    ],
+    [
+      330.0,
+      335.0,
+      "NO_SPEECH"
+    ],
+    [
+      335.0,
+      340.0,
+      "NO_SPEECH"
+    ],
+    [
+      340.0,
+      345.0,
+      "NO_SPEECH"
+    ],
+    [
+      345.0,
+      350.0,
+      "NO_SPEECH"
+    ],
+    [
+      350.0,
+      355.0,
+      "NO_SPEECH"
+    ],
+    [
+      355.0,
+      360.0,
+      "NO_SPEECH"
+    ],
+    [
+      360.0,
+      365.0,
+      "NO_SPEECH"
+    ],
+    [
+      365.0,
+      370.0,
+      "NO_SPEECH"
+    ],
+    [
+      370.0,
+      375.0,
+      "NO_SPEECH"
+    ],
+    [
+      375.0,
+      380.0,
+      "NO_SPEECH"
+    ],
+    [
+      380.0,
+      385.0,
+      "NO_SPEECH"
+    ],
+    [
+      385.0,
+      390.0,
+      "NO_SPEECH"
+    ],
+    [
+      390.0,
+      395.0,
+      "NO_SPEECH"
+    ],
+    [
+      395.0,
+      400.0,
+      "We have to put them in at the same time."
+    ],
+    [
+      400.0,
+      405.0,
+      "NO_SPEECH"
+    ],
+    [
+      405.0,
+      410.0,
+      "NO_SPEECH"
+    ],
+    [
+      410.0,
+      415.0,
+      "NO_SPEECH"
+    ],
+    [
+      415.0,
+      420.0,
+      "NO_SPEECH"
+    ],
+    [
+      420.0,
+      425.0,
+      "Oh, it's actually..."
+    ],
+    [
+      425.0,
+      430.0,
+      "the other side"
+    ],
+    [
+      430.0,
+      435.0,
+      "So it seems like the knot came off."
+    ],
+    [
+      435.0,
+      440.0,
+      "NO_SPEECH"
+    ],
+    [
+      440.0,
+      445.0,
+      "NO_SPEECH"
+    ],
+    [
+      445.0,
+      450.0,
+      "NO_SPEECH"
+    ],
+    [
+      450.0,
+      455.0,
+      "From the left-hand side?"
+    ],
+    [
+      455.0,
+      460.0,
+      "NO_SPEECH"
+    ],
+    [
+      460.0,
+      465.0,
+      "NO_SPEECH"
+    ],
+    [
+      465.0,
+      470.0,
+      "NO_SPEECH"
+    ],
+    [
+      470.0,
+      475.0,
+      "NO_SPEECH"
+    ],
+    [
+      475.0,
+      480.0,
+      "NO_SPEECH"
+    ],
+    [
+      480.0,
+      485.0,
+      "NO_SPEECH"
+    ],
+    [
+      485.0,
+      490.0,
+      "NO_SPEECH"
+    ],
+    [
+      490.0,
+      495.0,
+      "NO_SPEECH"
+    ],
+    [
+      495.0,
+      500.0,
+      "Alright."
+    ],
+    [
+      500.0,
+      505.0,
+      "If there is space for the duck to go in on the other side."
+    ],
+    [
+      505.0,
+      510.0,
+      "The light should be..."
+    ],
+    [
+      510.0,
+      515.0,
+      "Inserted on the right-hand side."
+    ],
+    [
+      515.0,
+      520.0,
+      "NO_SPEECH"
+    ],
+    [
+      520.0,
+      525.0,
+      "NO_SPEECH"
+    ],
+    [
+      525.0,
+      530.0,
+      "Can you press with the nut in on the other side?"
+    ],
+    [
+      530.0,
+      535.0,
+      "NO_SPEECH"
+    ],
+    [
+      535.0,
+      540.0,
+      "I'm going to secure it all back."
+    ],
+    [
+      540.0,
+      545.0,
+      "Great."
+    ],
+    [
+      545.0,
+      550.0,
+      "Please remove the handheld grip."
+    ],
+    [
+      550.0,
+      555.0,
+      "NO_SPEECH"
+    ],
+    [
+      555.0,
+      560.0,
+      "NO_SPEECH"
+    ],
+    [
+      560.0,
+      565.0,
+      "NO_SPEECH"
+    ],
+    [
+      565.0,
+      570.0,
+      "NO_SPEECH"
+    ],
+    [
+      570.0,
+      575.0,
+      "NO_SPEECH"
+    ],
+    [
+      575.0,
+      580.0,
+      "NO_SPEECH"
+    ],
+    [
+      580.0,
+      584.6336656184997,
+      "You can now stop the recording."
+    ]
+  ]
+}

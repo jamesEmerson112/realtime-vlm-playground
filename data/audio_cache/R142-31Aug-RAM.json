@@ -1,0 +1,257 @@
+{
+  "video_name": "R142-31Aug-RAM",
+  "video_relpath": "data/videos_full/R142-31Aug-RAM/Export_py/Video_pitchshift.mp4",
+  "video_size": 141433299,
+  "video_mtime": 1696489813.0,
+  "audio_chunk_sec": 5.0,
+  "cached_at": "2026-04-16T09:58:55.378802Z",
+  "verify_ran": true,
+  "transcripts": {
+    "0.0": "No, I didn't say record. So the first step...",
+    "5.0": "The first step is to replace the lamp coil.",
+    "10.0": "computer case",
+    "40.0": "Thank you.",
+    "55.0": "So this you have to touch the untainted metal surface.",
+    "60.0": "and also the safety",
+    "65.0": "The next step is to remove.",
+    "75.0": "So, to remove the existing memory module,",
+    "80.0": "press the clips on the sides",
+    "90.0": "The click mechanism will push the memory modules up.",
+    "95.0": "My computer runs outside",
+    "100.0": "We're taking them all out?",
+    "105.0": "Now we are going to take all of them, one by one.",
+    "125.0": "The next step",
+    "130.0": "We are going to put the mortise back.",
+    "135.0": "So, you have to find the...",
+    "140.0": "I'm going to use both hands and slide it in here.",
+    "165.0": "I have to hear the peak sound.",
+    "200.0": "Now you have to close the box, I mean, you have to close both of these."
+  },
+  "audio_log": [
+    [
+      0.0,
+      5.0,
+      "No, I didn't say record. So the first step..."
+    ],
+    [
+      5.0,
+      10.0,
+      "The first step is to replace the lamp coil."
+    ],
+    [
+      10.0,
+      15.0,
+      "computer case"
+    ],
+    [
+      15.0,
+      20.0,
+      "NO_SPEECH"
+    ],
+    [
+      20.0,
+      25.0,
+      "NO_SPEECH"
+    ],
+    [
+      25.0,
+      30.0,
+      "NO_SPEECH"
+    ],
+    [
+      30.0,
+      35.0,
+      "NO_SPEECH"
+    ],
+    [
+      35.0,
+      40.0,
+      "NO_SPEECH"
+    ],
+    [
+      40.0,
+      45.0,
+      "Thank you."
+    ],
+    [
+      45.0,
+      50.0,
+      "NO_SPEECH"
+    ],
+    [
+      50.0,
+      55.0,
+      "NO_SPEECH"
+    ],
+    [
+      55.0,
+      60.0,
+      "So this you have to touch the untainted metal surface."
+    ],
+    [
+      60.0,
+      65.0,
+      "and also the safety"
+    ],
+    [
+      65.0,
+      70.0,
+      "The next step is to remove."
+    ],
+    [
+      70.0,
+      75.0,
+      "NO_SPEECH"
+    ],
+    [
+      75.0,
+      80.0,
+      "So, to remove the existing memory module,"
+    ],
+    [
+      80.0,
+      85.0,
+      "press the clips on the sides"
+    ],
+    [
+      85.0,
+      90.0,
+      "NO_SPEECH"
+    ],
+    [
+      90.0,
+      95.0,
+      "The click mechanism will push the memory modules up."
+    ],
+    [
+      95.0,
+      100.0,
+      "My computer runs outside"
+    ],
+    [
+      100.0,
+      105.0,
+      "We're taking them all out?"
+    ],
+    [
+      105.0,
+      110.0,
+      "Now we are going to take all of them, one by one."
+    ],
+    [
+      110.0,
+      115.0,
+      "NO_SPEECH"
+    ],
+    [
+      115.0,
+      120.0,
+      "NO_SPEECH"
+    ],
+    [
+      120.0,
+      125.0,
+      "NO_SPEECH"
+    ],
+    [
+      125.0,
+      130.0,
+      "The next step"
+    ],
+    [
+      130.0,
+      135.0,
+      "We are going to put the mortise back."
+    ],
+    [
+      135.0,
+      140.0,
+      "So, you have to find the..."
+    ],
+    [
+      140.0,
+      145.0,
+      "I'm going to use both hands and slide it in here."
+    ],
+    [
+      145.0,
+      150.0,
+      "NO_SPEECH"
+    ],
+    [
+      150.0,
+      155.0,
+      "NO_SPEECH"
+    ],
+    [
+      155.0,
+      160.0,
+      "NO_SPEECH"
+    ],
+    [
+      160.0,
+      165.0,
+      "NO_SPEECH"
+    ],
+    [
+      165.0,
+      170.0,
+      "I have to hear the peak sound."
+    ],
+    [
+      170.0,
+      175.0,
+      "NO_SPEECH"
+    ],
+    [
+      175.0,
+      180.0,
+      "NO_SPEECH"
+    ],
+    [
+      180.0,
+      185.0,
+      "NO_SPEECH"
+    ],
+    [
+      185.0,
+      190.0,
+      "NO_SPEECH"
+    ],
+    [
+      190.0,
+      195.0,
+      "NO_SPEECH"
+    ],
+    [
+      195.0,
+      200.0,
+      "NO_SPEECH"
+    ],
+    [
+      200.0,
+      205.0,
+      "Now you have to close the box, I mean, you have to close both of these."
+    ],
+    [
+      205.0,
+      210.0,
+      "NO_SPEECH"
+    ],
+    [
+      210.0,
+      215.0,
+      "NO_SPEECH"
+    ],
+    [
+      215.0,
+      220.0,
+      "NO_SPEECH"
+    ],
+    [
+      220.0,
+      223.48790538591504,
+      "NO_SPEECH"
+    ]
+  ]
+}

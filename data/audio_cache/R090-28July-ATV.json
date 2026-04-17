@@ -1,0 +1,278 @@
+{
+  "video_name": "R090-28July-ATV",
+  "video_relpath": "data/videos_full/R090-28July-ATV/Export_py/Video_pitchshift.mp4",
+  "video_size": 193793631,
+  "video_mtime": 1696489861.0,
+  "audio_chunk_sec": 5.0,
+  "cached_at": "2026-04-16T09:51:00.831482Z",
+  "verify_ran": true,
+  "transcripts": {
+    "0.0": "There we go. All right. All right. Here it comes.",
+    "10.0": "The first task is going to move the lever to neutral.",
+    "15.0": "Go ahead and move it down to park. And then move it to a patrol.",
+    "20.0": "Perfect.",
+    "25.0": "We are going to look for the shift arm. That's going to be it.",
+    "30.0": "You're going to go ahead",
+    "35.0": "That's the word.",
+    "40.0": "Yep, that's the peg. Perfect.",
+    "45.0": "Now we're going to",
+    "50.0": "A washer to your right",
+    "55.0": "Look right here. Perfect. And then that, yep, right where you're looking. And",
+    "65.0": "Perfect.",
+    "75.0": "Alright, go ahead and take the, uh, little...",
+    "80.0": "...washer in there and screw it in.",
+    "90.0": "All right.",
+    "95.0": "I'm going to go ahead and grab the ratchet.",
+    "100.0": "Perfect. And go ahead and tighten up that bolt.",
+    "110.0": "Good. Now we are going to do...",
+    "115.0": "We're going to move the shift lever.",
+    "135.0": "Alright, perfect. Now go ahead and pick up that orange remote.",
+    "140.0": "It's going to be on your right.",
+    "145.0": "Go ahead and raise it.",
+    "150.0": "And bring it down. Perfect.",
+    "155.0": "Okay, perfect.",
+    "160.0": "And you are all done. Alright.",
+    "165.0": "hopefully find the stop",
+    "170.0": "Go. Take it apart. Oh yes! Finished taking it apart! Oh my gosh! Thank you!",
+    "175.0": "We are going to go in reverse.",
+    "220.0": "Go ahead and remove that arm.",
+    "230.0": "Stop."
+  },
+  "audio_log": [
+    [
+      0.0,
+      5.0,
+      "There we go. All right. All right. Here it comes."
+    ],
+    [
+      5.0,
+      10.0,
+      "NO_SPEECH"
+    ],
+    [
+      10.0,
+      15.0,
+      "The first task is going to move the lever to neutral."
+    ],
+    [
+      15.0,
+      20.0,
+      "Go ahead and move it down to park. And then move it to a patrol."
+    ],
+    [
+      20.0,
+      25.0,
+      "Perfect."
+    ],
+    [
+      25.0,
+      30.0,
+      "We are going to look for the shift arm. That's going to be it."
+    ],
+    [
+      30.0,
+      35.0,
+      "You're going to go ahead"
+    ],
+    [
+      35.0,
+      40.0,
+      "That's the word."
+    ],
+    [
+      40.0,
+      45.0,
+      "Yep, that's the peg. Perfect."
+    ],
+    [
+      45.0,
+      50.0,
+      "Now we're going to"
+    ],
+    [
+      50.0,
+      55.0,
+      "A washer to your right"
+    ],
+    [
+      55.0,
+      60.0,
+      "Look right here. Perfect. And then that, yep, right where you're looking. And"
+    ],
+    [
+      60.0,
+      65.0,
+      "NO_SPEECH"
+    ],
+    [
+      65.0,
+      70.0,
+      "Perfect."
+    ],
+    [
+      70.0,
+      75.0,
+      "NO_SPEECH"
+    ],
+    [
+      75.0,
+      80.0,
+      "Alright, go ahead and take the, uh, little..."
+    ],
+    [
+      80.0,
+      85.0,
+      "...washer in there and screw it in."
+    ],
+    [
+      85.0,
+      90.0,
+      "NO_SPEECH"
+    ],
+    [
+      90.0,
+      95.0,
+      "All right."
+    ],
+    [
+      95.0,
+      100.0,
+      "I'm going to go ahead and grab the ratchet."
+    ],
+    [
+      100.0,
+      105.0,
+      "Perfect. And go ahead and tighten up that bolt."
+    ],
+    [
+      105.0,
+      110.0,
+      "NO_SPEECH"
+    ],
+    [
+      110.0,
+      115.0,
+      "Good. Now we are going to do..."
+    ],
+    [
+      115.0,
+      120.0,
+      "We're going to move the shift lever."
+    ],
+    [
+      120.0,
+      125.0,
+      "NO_SPEECH"
+    ],
+    [
+      125.0,
+      130.0,
+      "NO_SPEECH"
+    ],
+    [
+      130.0,
+      135.0,
+      "NO_SPEECH"
+    ],
+    [
+      135.0,
+      140.0,
+      "Alright, perfect. Now go ahead and pick up that orange remote."
+    ],
+    [
+      140.0,
+      145.0,
+      "It's going to be on your right."
+    ],
+    [
+      145.0,
+      150.0,
+      "Go ahead and raise it."
+    ],
+    [
+      150.0,
+      155.0,
+      "And bring it down. Perfect."
+    ],
+    [
+      155.0,
+      160.0,
+      "Okay, perfect."
+    ],
+    [
+      160.0,
+      165.0,
+      "And you are all done. Alright."
+    ],
+    [
+      165.0,
+      170.0,
+      "hopefully find the stop"
+    ],
+    [
+      170.0,
+      175.0,
+      "Go. Take it apart. Oh yes! Finished taking it apart! Oh my gosh! Thank you!"
+    ],
+    [
+      175.0,
+      180.0,
+      "We are going to go in reverse."
+    ],
+    [
+      180.0,
+      185.0,
+      "NO_SPEECH"
+    ],
+    [
+      185.0,
+      190.0,
+      "NO_SPEECH"
+    ],
+    [
+      190.0,
+      195.0,
+      "NO_SPEECH"
+    ],
+    [
+      195.0,
+      200.0,
+      "NO_SPEECH"
+    ],
+    [
+      200.0,
+      205.0,
+      "NO_SPEECH"
+    ],
+    [
+      205.0,
+      210.0,
+      "NO_SPEECH"
+    ],
+    [
+      210.0,
+      215.0,
+      "NO_SPEECH"
+    ],
+    [
+      215.0,
+      220.0,
+      "NO_SPEECH"
+    ],
+    [
+      220.0,
+      225.0,
+      "Go ahead and remove that arm."
+    ],
+    [
+      225.0,
+      230.0,
+      "NO_SPEECH"
+    ],
+    [
+      230.0,
+      231.88689274302484,
+      "Stop."
+    ]
+  ]
+}

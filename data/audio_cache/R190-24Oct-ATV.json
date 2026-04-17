@@ -1,0 +1,413 @@
+{
+  "video_name": "R190-24Oct-ATV",
+  "video_relpath": "data/videos_full/R190-24Oct-ATV/Export_py/Video_pitchshift.mp4",
+  "video_size": 267776657,
+  "video_mtime": 1696489847.0,
+  "audio_chunk_sec": 5.0,
+  "cached_at": "2026-04-16T14:36:28.314153Z",
+  "verify_ran": true,
+  "transcripts": {
+    "10.0": "Okay. Ooh.",
+    "15.0": "Okay.",
+    "20.0": "Can you repeat that?",
+    "25.0": "Go ahead and put the shift lever into neutral position.",
+    "30.0": "Go ahead and face.",
+    "35.0": "and slide the shim onto the mounting peg.",
+    "45.0": "And you're going to walk over to the bin area.",
+    "50.0": "On to your right.",
+    "55.0": "Elephants",
+    "60.0": "about one washer and one bolt",
+    "65.0": "Okay.",
+    "70.0": "Okay?",
+    "75.0": "I'm going to walk back to DATV.",
+    "80.0": "Go ahead and place the ball in front of you.",
+    "100.0": "Go ahead and grab the ratchet.",
+    "105.0": "in the box on your left.",
+    "140.0": "Okay, now.",
+    "145.0": "Shift through all the gears.",
+    "160.0": "We're going to leave it in park. So now you're going to go ahead and look at it.",
+    "165.0": "and grab that black controller.",
+    "170.0": "towards the black box",
+    "180.0": "Hold it the other way.",
+    "185.0": "Alright, once it's on, once it's read, that means it's on, so go ahead and grab the launch controller.",
+    "190.0": "bottom",
+    "195.0": "Stand behind the caution line. Go ahead and press the button.",
+    "200.0": "DTV up, out of the way.",
+    "215.0": "Now press and push it down.",
+    "220.0": "Now go ahead.",
+    "225.0": "Place the orange controller down.",
+    "230.0": "With the black controller, turn off the black buttons.",
+    "240.0": "Now you're going to place the controller back onto the two boxes.",
+    "250.0": "Shift through all gears once",
+    "265.0": "Okay, I'm going to go ahead and untighten the bolt with the ratchet.",
+    "280.0": "button on the ratchet. Go ahead and flip to your left side.",
+    "285.0": "should be able to",
+    "290.0": "Move it to the left.",
+    "330.0": "and put them back.",
+    "335.0": "And you're gonna walk over to",
+    "345.0": "Back to the ATB. Go ahead and un-melt the...",
+    "350.0": "Go ahead"
+  },
+  "audio_log": [
+    [
+      0.0,
+      5.0,
+      "NO_SPEECH"
+    ],
+    [
+      5.0,
+      10.0,
+      "NO_SPEECH"
+    ],
+    [
+      10.0,
+      15.0,
+      "Okay. Ooh."
+    ],
+    [
+      15.0,
+      20.0,
+      "Okay."
+    ],
+    [
+      20.0,
+      25.0,
+      "Can you repeat that?"
+    ],
+    [
+      25.0,
+      30.0,
+      "Go ahead and put the shift lever into neutral position."
+    ],
+    [
+      30.0,
+      35.0,
+      "Go ahead and face."
+    ],
+    [
+      35.0,
+      40.0,
+      "and slide the shim onto the mounting peg."
+    ],
+    [
+      40.0,
+      45.0,
+      "NO_SPEECH"
+    ],
+    [
+      45.0,
+      50.0,
+      "And you're going to walk over to the bin area."
+    ],
+    [
+      50.0,
+      55.0,
+      "On to your right."
+    ],
+    [
+      55.0,
+      60.0,
+      "Elephants"
+    ],
+    [
+      60.0,
+      65.0,
+      "about one washer and one bolt"
+    ],
+    [
+      65.0,
+      70.0,
+      "Okay."
+    ],
+    [
+      70.0,
+      75.0,
+      "Okay?"
+    ],
+    [
+      75.0,
+      80.0,
+      "I'm going to walk back to DATV."
+    ],
+    [
+      80.0,
+      85.0,
+      "Go ahead and place the ball in front of you."
+    ],
+    [
+      85.0,
+      90.0,
+      "NO_SPEECH"
+    ],
+    [
+      90.0,
+      95.0,
+      "NO_SPEECH"
+    ],
+    [
+      95.0,
+      100.0,
+      "NO_SPEECH"
+    ],
+    [
+      100.0,
+      105.0,
+      "Go ahead and grab the ratchet."
+    ],
+    [
+      105.0,
+      110.0,
+      "in the box on your left."
+    ],
+    [
+      110.0,
+      115.0,
+      "NO_SPEECH"
+    ],
+    [
+      115.0,
+      120.0,
+      "NO_SPEECH"
+    ],
+    [
+      120.0,
+      125.0,
+      "NO_SPEECH"
+    ],
+    [
+      125.0,
+      130.0,
+      "NO_SPEECH"
+    ],
+    [
+      130.0,
+      135.0,
+      "NO_SPEECH"
+    ],
+    [
+      135.0,
+      140.0,
+      "NO_SPEECH"
+    ],
+    [
+      140.0,
+      145.0,
+      "Okay, now."
+    ],
+    [
+      145.0,
+      150.0,
+      "Shift through all the gears."
+    ],
+    [
+      150.0,
+      155.0,
+      "NO_SPEECH"
+    ],
+    [
+      155.0,
+      160.0,
+      "NO_SPEECH"
+    ],
+    [
+      160.0,
+      165.0,
+      "We're going to leave it in park. So now you're going to go ahead and look at it."
+    ],
+    [
+      165.0,
+      170.0,
+      "and grab that black controller."
+    ],
+    [
+      170.0,
+      175.0,
+      "towards the black box"
+    ],
+    [
+      175.0,
+      180.0,
+      "NO_SPEECH"
+    ],
+    [
+      180.0,
+      185.0,
+      "Hold it the other way."
+    ],
+    [
+      185.0,
+      190.0,
+      "Alright, once it's on, once it's read, that means it's on, so go ahead and grab the launch controller."
+    ],
+    [
+      190.0,
+      195.0,
+      "bottom"
+    ],
+    [
+      195.0,
+      200.0,
+      "Stand behind the caution line. Go ahead and press the button."
+    ],
+    [
+      200.0,
+      205.0,
+      "DTV up, out of the way."
+    ],
+    [
+      205.0,
+      210.0,
+      "NO_SPEECH"
+    ],
+    [
+      210.0,
+      215.0,
+      "NO_SPEECH"
+    ],
+    [
+      215.0,
+      220.0,
+      "Now press and push it down."
+    ],
+    [
+      220.0,
+      225.0,
+      "Now go ahead."
+    ],
+    [
+      225.0,
+      230.0,
+      "Place the orange controller down."
+    ],
+    [
+      230.0,
+      235.0,
+      "With the black controller, turn off the black buttons."
+    ],
+    [
+      235.0,
+      240.0,
+      "NO_SPEECH"
+    ],
+    [
+      240.0,
+      245.0,
+      "Now you're going to place the controller back onto the two boxes."
+    ],
+    [
+      245.0,
+      250.0,
+      "NO_SPEECH"
+    ],
+    [
+      250.0,
+      255.0,
+      "Shift through all gears once"
+    ],
+    [
+      255.0,
+      260.0,
+      "NO_SPEECH"
+    ],
+    [
+      260.0,
+      265.0,
+      "NO_SPEECH"
+    ],
+    [
+      265.0,
+      270.0,
+      "Okay, I'm going to go ahead and untighten the bolt with the ratchet."
+    ],
+    [
+      270.0,
+      275.0,
+      "NO_SPEECH"
+    ],
+    [
+      275.0,
+      280.0,
+      "NO_SPEECH"
+    ],
+    [
+      280.0,
+      285.0,
+      "button on the ratchet. Go ahead and flip to your left side."
+    ],
+    [
+      285.0,
+      290.0,
+      "should be able to"
+    ],
+    [
+      290.0,
+      295.0,
+      "Move it to the left."
+    ],
+    [
+      295.0,
+      300.0,
+      "NO_SPEECH"
+    ],
+    [
+      300.0,
+      305.0,
+      "NO_SPEECH"
+    ],
+    [
+      305.0,
+      310.0,
+      "NO_SPEECH"
+    ],
+    [
+      310.0,
+      315.0,
+      "NO_SPEECH"
+    ],
+    [
+      315.0,
+      320.0,
+      "NO_SPEECH"
+    ],
+    [
+      320.0,
+      325.0,
+      "NO_SPEECH"
+    ],
+    [
+      325.0,
+      330.0,
+      "NO_SPEECH"
+    ],
+    [
+      330.0,
+      335.0,
+      "and put them back."
+    ],
+    [
+      335.0,
+      340.0,
+      "And you're gonna walk over to"
+    ],
+    [
+      340.0,
+      345.0,
+      "NO_SPEECH"
+    ],
+    [
+      345.0,
+      350.0,
+      "Back to the ATB. Go ahead and un-melt the..."
+    ],
+    [
+      350.0,
+      355.0,
+      "Go ahead"
+    ],
+    [
+      355.0,
+      358.1466377434598,
+      "NO_SPEECH"
+    ]
+  ]
+}

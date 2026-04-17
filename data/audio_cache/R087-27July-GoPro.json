@@ -1,0 +1,258 @@
+{
+  "video_name": "R087-27July-GoPro",
+  "video_relpath": "data/videos_full/R087-27July-GoPro/Export_py/Video_pitchshift.mp4",
+  "video_size": 57944082,
+  "video_mtime": 1696489862.0,
+  "audio_chunk_sec": 5.0,
+  "cached_at": "2026-04-16T09:44:16.801055Z",
+  "verify_ran": true,
+  "transcripts": {
+    "0.0": "Ready? Okay. Grab the GoPro. Turn it on.",
+    "25.0": "Is it the other way? Yeah.",
+    "35.0": "So you want to lift up, and then pull out.",
+    "85.0": "You're going to have to...",
+    "90.0": "Use your finger and pull really hard.",
+    "95.0": "Just try to lift it up.",
+    "110.0": "Just do it again.",
+    "115.0": "And just lift this up.",
+    "120.0": "How do you define your longest nail?",
+    "150.0": "Push down and up.",
+    "190.0": "I'll just keep trying.",
+    "195.0": "If you turn it the other way, yeah?",
+    "200.0": "Lift up as hard as you can",
+    "205.0": "It should kind of pop out.",
+    "220.0": "Okay, I'll just stop the video."
+  },
+  "audio_log": [
+    [
+      0.0,
+      5.0,
+      "Ready? Okay. Grab the GoPro. Turn it on."
+    ],
+    [
+      5.0,
+      10.0,
+      "NO_SPEECH"
+    ],
+    [
+      10.0,
+      15.0,
+      "NO_SPEECH"
+    ],
+    [
+      15.0,
+      20.0,
+      "NO_SPEECH"
+    ],
+    [
+      20.0,
+      25.0,
+      "NO_SPEECH"
+    ],
+    [
+      25.0,
+      30.0,
+      "Is it the other way? Yeah."
+    ],
+    [
+      30.0,
+      35.0,
+      "NO_SPEECH"
+    ],
+    [
+      35.0,
+      40.0,
+      "So you want to lift up, and then pull out."
+    ],
+    [
+      40.0,
+      45.0,
+      "NO_SPEECH"
+    ],
+    [
+      45.0,
+      50.0,
+      "NO_SPEECH"
+    ],
+    [
+      50.0,
+      55.0,
+      "NO_SPEECH"
+    ],
+    [
+      55.0,
+      60.0,
+      "NO_SPEECH"
+    ],
+    [
+      60.0,
+      65.0,
+      "NO_SPEECH"
+    ],
+    [
+      65.0,
+      70.0,
+      "NO_SPEECH"
+    ],
+    [
+      70.0,
+      75.0,
+      "NO_SPEECH"
+    ],
+    [
+      75.0,
+      80.0,
+      "NO_SPEECH"
+    ],
+    [
+      80.0,
+      85.0,
+      "NO_SPEECH"
+    ],
+    [
+      85.0,
+      90.0,
+      "You're going to have to..."
+    ],
+    [
+      90.0,
+      95.0,
+      "Use your finger and pull really hard."
+    ],
+    [
+      95.0,
+      100.0,
+      "Just try to lift it up."
+    ],
+    [
+      100.0,
+      105.0,
+      "NO_SPEECH"
+    ],
+    [
+      105.0,
+      110.0,
+      "NO_SPEECH"
+    ],
+    [
+      110.0,
+      115.0,
+      "Just do it again."
+    ],
+    [
+      115.0,
+      120.0,
+      "And just lift this up."
+    ],
+    [
+      120.0,
+      125.0,
+      "How do you define your longest nail?"
+    ],
+    [
+      125.0,
+      130.0,
+      "NO_SPEECH"
+    ],
+    [
+      130.0,
+      135.0,
+      "NO_SPEECH"
+    ],
+    [
+      135.0,
+      140.0,
+      "NO_SPEECH"
+    ],
+    [
+      140.0,
+      145.0,
+      "NO_SPEECH"
+    ],
+    [
+      145.0,
+      150.0,
+      "NO_SPEECH"
+    ],
+    [
+      150.0,
+      155.0,
+      "Push down and up."
+    ],
+    [
+      155.0,
+      160.0,
+      "NO_SPEECH"
+    ],
+    [
+      160.0,
+      165.0,
+      "NO_SPEECH"
+    ],
+    [
+      165.0,
+      170.0,
+      "NO_SPEECH"
+    ],
+    [
+      170.0,
+      175.0,
+      "NO_SPEECH"
+    ],
+    [
+      175.0,
+      180.0,
+      "NO_SPEECH"
+    ],
+    [
+      180.0,
+      185.0,
+      "NO_SPEECH"
+    ],
+    [
+      185.0,
+      190.0,
+      "NO_SPEECH"
+    ],
+    [
+      190.0,
+      195.0,
+      "I'll just keep trying."
+    ],
+    [
+      195.0,
+      200.0,
+      "If you turn it the other way, yeah?"
+    ],
+    [
+      200.0,
+      205.0,
+      "Lift up as hard as you can"
+    ],
+    [
+      205.0,
+      210.0,
+      "It should kind of pop out."
+    ],
+    [
+      210.0,
+      215.0,
+      "NO_SPEECH"
+    ],
+    [
+      215.0,
+      220.0,
+      "NO_SPEECH"
+    ],
+    [
+      220.0,
+      225.0,
+      "Okay, I'll just stop the video."
+    ],
+    [
+      225.0,
+      226.62146386712485,
+      "NO_SPEECH"
+    ]
+  ]
+}

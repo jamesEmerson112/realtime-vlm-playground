@@ -1,0 +1,200 @@
+{
+  "video_name": "R092-28July-Circuit-Breaker",
+  "video_relpath": "data/videos_full/R092-28July-Circuit-Breaker/Export_py/Video_pitchshift.mp4",
+  "video_size": 86337410,
+  "video_mtime": 1696489881.0,
+  "audio_chunk_sec": 5.0,
+  "cached_at": "2026-04-16T09:54:12.121839Z",
+  "verify_ran": true,
+  "transcripts": {
+    "5.0": "So we are doing the circuit very quickly.",
+    "10.0": "So, go to the switch, main power on.",
+    "15.0": "This is a good way of doing it. Now we are going to do the inspection.",
+    "20.0": "Open the front door panel of the circuit brick.",
+    "30.0": "Look for any damaged parts in there.",
+    "35.0": "Is that one on? OK. I can take it out.",
+    "40.0": "I putted it on the table next to me.",
+    "45.0": "You've got to pick up the... Yeah, I'm going to...",
+    "50.0": "Did you write the toolbox?",
+    "55.0": "Lift the lid. Open it up.",
+    "60.0": "You can get the similar part from the box.",
+    "70.0": "Let the new component into the socket.",
+    "85.0": "Switch the main board off.",
+    "95.0": "Press the reset button on the left side of the circuit breaker.",
+    "100.0": "No.",
+    "105.0": "Reset everything. Turn off the light.",
+    "110.0": "Clicking on the basic button. The next step is...",
+    "115.0": "Switch off of the main power. The power off.",
+    "120.0": "Open the panel door.",
+    "125.0": "Pick up the file.",
+    "130.0": "Put it back in the toolbox.",
+    "140.0": "damage."
+  },
+  "audio_log": [
+    [
+      0.0,
+      5.0,
+      "NO_SPEECH"
+    ],
+    [
+      5.0,
+      10.0,
+      "So we are doing the circuit very quickly."
+    ],
+    [
+      10.0,
+      15.0,
+      "So, go to the switch, main power on."
+    ],
+    [
+      15.0,
+      20.0,
+      "This is a good way of doing it. Now we are going to do the inspection."
+    ],
+    [
+      20.0,
+      25.0,
+      "Open the front door panel of the circuit brick."
+    ],
+    [
+      25.0,
+      30.0,
+      "NO_SPEECH"
+    ],
+    [
+      30.0,
+      35.0,
+      "Look for any damaged parts in there."
+    ],
+    [
+      35.0,
+      40.0,
+      "Is that one on? OK. I can take it out."
+    ],
+    [
+      40.0,
+      45.0,
+      "I putted it on the table next to me."
+    ],
+    [
+      45.0,
+      50.0,
+      "You've got to pick up the... Yeah, I'm going to..."
+    ],
+    [
+      50.0,
+      55.0,
+      "Did you write the toolbox?"
+    ],
+    [
+      55.0,
+      60.0,
+      "Lift the lid. Open it up."
+    ],
+    [
+      60.0,
+      65.0,
+      "You can get the similar part from the box."
+    ],
+    [
+      65.0,
+      70.0,
+      "NO_SPEECH"
+    ],
+    [
+      70.0,
+      75.0,
+      "Let the new component into the socket."
+    ],
+    [
+      75.0,
+      80.0,
+      "NO_SPEECH"
+    ],
+    [
+      80.0,
+      85.0,
+      "NO_SPEECH"
+    ],
+    [
+      85.0,
+      90.0,
+      "Switch the main board off."
+    ],
+    [
+      90.0,
+      95.0,
+      "NO_SPEECH"
+    ],
+    [
+      95.0,
+      100.0,
+      "Press the reset button on the left side of the circuit breaker."
+    ],
+    [
+      100.0,
+      105.0,
+      "No."
+    ],
+    [
+      105.0,
+      110.0,
+      "Reset everything. Turn off the light."
+    ],
+    [
+      110.0,
+      115.0,
+      "Clicking on the basic button. The next step is..."
+    ],
+    [
+      115.0,
+      120.0,
+      "Switch off of the main power. The power off."
+    ],
+    [
+      120.0,
+      125.0,
+      "Open the panel door."
+    ],
+    [
+      125.0,
+      130.0,
+      "Pick up the file."
+    ],
+    [
+      130.0,
+      135.0,
+      "Put it back in the toolbox."
+    ],
+    [
+      135.0,
+      140.0,
+      "NO_SPEECH"
+    ],
+    [
+      140.0,
+      145.0,
+      "damage."
+    ],
+    [
+      145.0,
+      150.0,
+      "NO_SPEECH"
+    ],
+    [
+      150.0,
+      155.0,
+      "NO_SPEECH"
+    ],
+    [
+      155.0,
+      160.0,
+      "NO_SPEECH"
+    ],
+    [
+      160.0,
+      161.29068680097254,
+      "NO_SPEECH"
+    ]
+  ]
+}

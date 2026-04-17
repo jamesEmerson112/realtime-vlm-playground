@@ -1,0 +1,222 @@
+{
+  "video_name": "z039-june-23-22-dslr",
+  "video_relpath": "data/videos_full/z039-june-23-22-dslr/Export_py/Video_pitchshift.mp4",
+  "video_size": 35686456,
+  "video_mtime": 1696489822.0,
+  "audio_chunk_sec": 5.0,
+  "cached_at": "2026-04-16T14:58:20.675604Z",
+  "verify_ran": true,
+  "transcripts": {
+    "0.0": "Alright, now we're going to look at the DSLR camera. So, to start...",
+    "5.0": "Please take the camera and detach the lens.",
+    "10.0": "That's the cover. Please put it on.",
+    "15.0": "and detach the lens.",
+    "20.0": "To detach it, you should press a button that's on the side of the device.",
+    "25.0": "and then you're going to rotate it.",
+    "30.0": "The button is on the other side of the lens.",
+    "40.0": "Perfect, thank you. The next step is to put back the lens.",
+    "50.0": "Great.",
+    "55.0": "Now please detach the lens cover.",
+    "60.0": "Thank you. Please attach the lens cover.",
+    "65.0": "The next step is to turn on the camera.",
+    "70.0": "The power button",
+    "75.0": "is on the top of the camera.",
+    "80.0": "Where are your fingers? Oh, yes. Thank you.",
+    "85.0": "Now you can turn off the camera.",
+    "90.0": "The next step is to change the battery of this camera.",
+    "105.0": "Please rotate the camera to the left.",
+    "110.0": "You can keep that open and rotate the camera so that the battery can charge.",
+    "115.0": "Great, you can put it back.",
+    "120.0": "Now please change the",
+    "125.0": "SD card of the camera.",
+    "130.0": "The SD card is on the right side of the camera. You should press a button.",
+    "135.0": "There is a button on the right side of the screen.",
+    "140.0": "on the right side of the screen",
+    "145.0": "That's the lower button, this one.",
+    "150.0": "The lower one.",
+    "155.0": "You should press on the gray thing to get the entity card out.",
+    "170.0": "Perfect. It's over. You can press the stop button."
+  },
+  "audio_log": [
+    [
+      0.0,
+      5.0,
+      "Alright, now we're going to look at the DSLR camera. So, to start..."
+    ],
+    [
+      5.0,
+      10.0,
+      "Please take the camera and detach the lens."
+    ],
+    [
+      10.0,
+      15.0,
+      "That's the cover. Please put it on."
+    ],
+    [
+      15.0,
+      20.0,
+      "and detach the lens."
+    ],
+    [
+      20.0,
+      25.0,
+      "To detach it, you should press a button that's on the side of the device."
+    ],
+    [
+      25.0,
+      30.0,
+      "and then you're going to rotate it."
+    ],
+    [
+      30.0,
+      35.0,
+      "The button is on the other side of the lens."
+    ],
+    [
+      35.0,
+      40.0,
+      "NO_SPEECH"
+    ],
+    [
+      40.0,
+      45.0,
+      "Perfect, thank you. The next step is to put back the lens."
+    ],
+    [
+      45.0,
+      50.0,
+      "NO_SPEECH"
+    ],
+    [
+      50.0,
+      55.0,
+      "Great."
+    ],
+    [
+      55.0,
+      60.0,
+      "Now please detach the lens cover."
+    ],
+    [
+      60.0,
+      65.0,
+      "Thank you. Please attach the lens cover."
+    ],
+    [
+      65.0,
+      70.0,
+      "The next step is to turn on the camera."
+    ],
+    [
+      70.0,
+      75.0,
+      "The power button"
+    ],
+    [
+      75.0,
+      80.0,
+      "is on the top of the camera."
+    ],
+    [
+      80.0,
+      85.0,
+      "Where are your fingers? Oh, yes. Thank you."
+    ],
+    [
+      85.0,
+      90.0,
+      "Now you can turn off the camera."
+    ],
+    [
+      90.0,
+      95.0,
+      "The next step is to change the battery of this camera."
+    ],
+    [
+      95.0,
+      100.0,
+      "NO_SPEECH"
+    ],
+    [
+      100.0,
+      105.0,
+      "NO_SPEECH"
+    ],
+    [
+      105.0,
+      110.0,
+      "Please rotate the camera to the left."
+    ],
+    [
+      110.0,
+      115.0,
+      "You can keep that open and rotate the camera so that the battery can charge."
+    ],
+    [
+      115.0,
+      120.0,
+      "Great, you can put it back."
+    ],
+    [
+      120.0,
+      125.0,
+      "Now please change the"
+    ],
+    [
+      125.0,
+      130.0,
+      "SD card of the camera."
+    ],
+    [
+      130.0,
+      135.0,
+      "The SD card is on the right side of the camera. You should press a button."
+    ],
+    [
+      135.0,
+      140.0,
+      "There is a button on the right side of the screen."
+    ],
+    [
+      140.0,
+      145.0,
+      "on the right side of the screen"
+    ],
+    [
+      145.0,
+      150.0,
+      "That's the lower button, this one."
+    ],
+    [
+      150.0,
+      155.0,
+      "The lower one."
+    ],
+    [
+      155.0,
+      160.0,
+      "You should press on the gray thing to get the entity card out."
+    ],
+    [
+      160.0,
+      165.0,
+      "NO_SPEECH"
+    ],
+    [
+      165.0,
+      170.0,
+      "NO_SPEECH"
+    ],
+    [
+      170.0,
+      175.0,
+      "Perfect. It's over. You can press the stop button."
+    ],
+    [
+      175.0,
+      176.59010005382407,
+      "NO_SPEECH"
+    ]
+  ]
+}

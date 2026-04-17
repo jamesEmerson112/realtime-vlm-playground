@@ -1,0 +1,44 @@
+Describe what the student is doing a task with or without an instructor's guidance from his first perspective to return the following response JSON (no fences) to see if {task_name}:
+{{
+    "timestamp_sec": {timestamp_sec},
+    "type": "step_completion" | "error_detected" | null,
+    "step_completion_percentage" : <0.0-1.0>
+    "error_type": "wrong_action" | "wrong_sequence" | "safety_violation" | "improper_technique" | "other" | null,
+    "severity": "info" | "warning" | "critical" | null,
+    "confidence": <0.0-1.0>,
+    "description": "<what is the technician doing?>"
+}}
+
+given the following context: the current conversation of the moment - {audio_line}, previously the student did: {previous_frame}
+
+EXAMPLE:
+{{
+    "timestamp_sec": 18.2,
+    "type": "error_detected",
+    "error_type": "wrong_action",
+    "severity": "warning",
+    "correction_type": "Wrong Action, corrected by instructor verbally",
+    "correction_transcript": "none",
+    "description": "The student lifts the wrong toolbox."
+}},
+{{
+    "timestamp_sec": 33.639,
+    "type": "error_detected",
+    "error_type": "wrong_action",
+    "severity": "warning",
+    "correction_type": "Wrong Action, corrected by instructor verbally",
+    "correction_transcript": "none",
+    "description": "The student grabs wrong part."
+}},
+{{
+    "timestamp_sec": 49.653,
+    "type": "step_completion",
+    "step_id": 1,
+    "description": "The student grabs the circuit breaker."
+}},
+{{
+    "timestamp_sec": 57.349,
+    "type": "step_completion",
+    "step_id": 2,
+    "description": "The student turns on the circuit breaker box."
+}},

@@ -22,6 +22,15 @@ import wave
 import base64
 import argparse
 import threading
+
+# Force UTF-8 stdout/stderr on Windows — whisper outputs Unicode (em-dashes,
+# smart quotes, accents) that PowerShell's default cp1252 encoding can't print,
+# which crashes precompute_audio() mid-chunk before the cache gets saved.
+try:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+except (AttributeError, ValueError):
+    pass
 from collections import deque
 from pathlib import Path
 from typing import Dict, Any, Optional
@@ -86,18 +95,16 @@ class PipelineLogger:
             print(f"  [{w} | {v}] VLM_REQ      {step_note}prompt={d['prompt_len']}chars")
         elif t == "vlm_response":
             p = d["parsed"]
-            # Observer-only schema: no status/step_id, just hands/objects/action
-            action_brief = (p.get("action") or p.get("description") or "")[:50]
+            # V5 schema: description is the free-text summary. Fall back to
+            # legacy "action" for back-compat with older logs.
+            action_brief = (p.get("description") or p.get("action") or "")[:50]
             conf = p.get("confidence", "-")
-            print(f"  [{w} | {v}] VLM_RESP     {d['latency_ms']}ms conf={conf} action=\"{action_brief}\"")
+            print(f"  [{w} | {v}] VLM_RESP     {d['latency_ms']}ms conf={conf} desc=\"{action_brief}\"")
         elif t == "vlm_error":
             print(f"  [{w} | {v}] VLM_ERR      {d['error']}")
-        elif t == "mother_batch_request":
-            print(f"  [{w} | {v}] MOTHER_REQ   model={d.get('model')} obs={d.get('observation_count')} audio={d.get('audio_count')} prompt={d.get('prompt_len')}chars")
-        elif t == "mother_batch_response":
-            print(f"  [{w} | {v}] MOTHER_RESP  {d.get('elapsed_sec')}s events={d.get('events_count')}")
-        elif t == "mother_batch_error":
-            print(f"  [{w} | {v}] MOTHER_ERR   {d.get('error')}")
+        elif t == "emit_rejected":
+            reason = str(d.get("reason", ""))[:80]
+            print(f"  [{w} | {v}] EMIT_REJECT  {reason}")
         elif t == "state_change":
             print(f"  [{w} | {v}] STATE        {d['field']}: {d['old']} -> {d['new']}")
         elif t == "event_emitted":
@@ -160,7 +167,7 @@ class PipelineLogger:
         # --- Timeline table ---
         timeline_types = {"vlm_request", "vlm_response", "vlm_error", "state_change",
                           "event_emitted", "idle_check", "audio_request", "audio_response", "audio_error",
-                          "mother_batch_request", "mother_batch_response", "mother_batch_error"}
+                          "emit_rejected"}
         timeline = [e for e in self.entries if e["event_type"] in timeline_types]
 
         if timeline:
@@ -177,7 +184,7 @@ class PipelineLogger:
                     detail = f"{step_note}prompt {d['prompt_len']} chars"
                 elif t == "vlm_response":
                     p = d.get("parsed", {}) or {}
-                    action_brief = (p.get("action") or p.get("description") or "")[:60]
+                    action_brief = (p.get("description") or p.get("action") or "")[:60]
                     detail = f"conf={p.get('confidence', '-')} ({d.get('latency_ms', '-')}ms) \"{action_brief}\""
                 elif t == "vlm_error":
                     detail = f"Error: {d['error']}"
@@ -195,12 +202,9 @@ class PipelineLogger:
                     detail = f"speech={d['is_speech']} ({d['latency_ms']}ms) \"{txt}\""
                 elif t == "audio_error":
                     detail = f"{d['start_sec']:.1f}-{d['end_sec']:.1f}s Error: {d['error']}"
-                elif t == "mother_batch_request":
-                    detail = f"model={d.get('model')} obs={d.get('observation_count')} audio={d.get('audio_count')} prompt={d.get('prompt_len')}chars"
-                elif t == "mother_batch_response":
-                    detail = f"{d.get('elapsed_sec')}s, {d.get('events_count')} events"
-                elif t == "mother_batch_error":
-                    detail = f"Error: {d.get('error')}"
+                elif t == "emit_rejected":
+                    cand = d.get("candidate", {}) or {}
+                    detail = f"{cand.get('type')} — {str(d.get('reason', ''))[:120]}"
                 else:
                     detail = str(d)[:100]
                 lines.append(f"| {vt} | {wt} | {t} | {detail} |")
@@ -228,14 +232,25 @@ class PipelineLogger:
                     lines.append(resp["data"]["response"])
                     lines.append("```\n")
                     p = resp["data"]["parsed"]
-                    # Observer schema (Mother V1): hands/objects/action/visual_cues/confidence
-                    # Older schema (pre-V1): status/step_id/confidence — handle both
-                    if "hands" in p or "action" in p:
-                        action = p.get("action", p.get("description", ""))[:120]
+                    # V5 schema: 7 boolean/enum/text fields.
+                    # Legacy schemas (pre-V5) had hands/action/status/step_id — fall through to else.
+                    if "current_step_just_completed" in p or "description" in p:
+                        description = (p.get("description") or p.get("action") or "")[:120]
+                        lines.append(
+                            f"**Parsed (V5):** desc=\"{description}\", "
+                            f"current_completed={p.get('current_step_just_completed')}, "
+                            f"next_starting={p.get('next_step_starting')}, "
+                            f"hands_active={p.get('hands_active')}, "
+                            f"error_visible={p.get('error_visible')}, "
+                            f"confidence={p.get('confidence')}\n"
+                        )
+                    elif "hands" in p or "action" in p:
+                        action = (p.get("action") or p.get("description") or "")[:120]
+                        hands = (p.get("hands") or "")[:80]
                         lines.append(
                             f"**Parsed (observer):** action=\"{action}\", "
                             f"confidence={p.get('confidence')}, "
-                            f"hands=\"{p.get('hands', '')[:80]}\"\n"
+                            f"hands=\"{hands}\"\n"
                         )
                     else:
                         lines.append(
@@ -245,64 +260,6 @@ class PipelineLogger:
                         )
                 else:
                     lines.append("**Response:** (error or missing)\n")
-
-        # --- Mother Agent input & output ---
-        mother_pairs = []
-        for i, e in enumerate(self.entries):
-            if e["event_type"] == "mother_batch_request":
-                # Pair with the next response OR error entry after this request.
-                outcome = next(
-                    (r for r in self.entries[i + 1:]
-                     if r["event_type"] in ("mother_batch_response", "mother_batch_error")),
-                    None,
-                )
-                mother_pairs.append((e, outcome))
-
-        if mother_pairs:
-            lines.append("## Mother Agent Input & Output\n")
-            for idx, (req, outcome) in enumerate(mother_pairs, 1):
-                rd = req["data"]
-                prompt_text = rd.get("prompt", "(prompt not captured)")
-                prompt_len = rd.get("prompt_len", len(prompt_text) if isinstance(prompt_text, str) else 0)
-                obs_count = rd.get("observation_count", "?")
-                audio_count = rd.get("audio_count", "?")
-
-                header_suffix = f" #{idx}" if len(mother_pairs) > 1 else ""
-                lines.append(
-                    f"### Input{header_suffix} "
-                    f"(system prompt, {prompt_len} chars, "
-                    f"{obs_count} observations + {audio_count} audio lines)\n"
-                )
-                lines.append("```")
-                lines.append(prompt_text)
-                lines.append("```\n")
-
-                if outcome is None:
-                    lines.append("**Output:** (no response or error logged)\n")
-                    continue
-
-                od = outcome["data"]
-                if outcome["event_type"] == "mother_batch_response":
-                    elapsed = od.get("elapsed_sec", "?")
-                    events_count = od.get("events_count", "?")
-                    response_text = od.get("response", "")
-                    lines.append(
-                        f"### Output{header_suffix} ({elapsed}s, {events_count} events)\n"
-                    )
-                    lines.append("```")
-                    lines.append(response_text)
-                    lines.append("```\n")
-                else:  # mother_batch_error
-                    elapsed = od.get("elapsed_sec", "?")
-                    err_msg = od.get("error", "(no error message)")
-                    response_text = od.get("response", "")
-                    lines.append(f"### Error{header_suffix} ({elapsed}s)\n")
-                    lines.append(f"**Error:** {err_msg}\n")
-                    if response_text:
-                        lines.append("**Raw response:**")
-                        lines.append("```")
-                        lines.append(response_text)
-                        lines.append("```\n")
 
         with open(path, "w", encoding="utf-8") as f:
             f.write("\n".join(lines))
@@ -322,7 +279,7 @@ def call_vlm(
     api_key: str,
     frame_base64: str,
     prompt: str,
-    model: str = "google/gemini-3-flash-preview",
+    model: str = "google/gemini-3.1-flash-image-preview",
     stream: bool = False,
 ) -> str:
     """
@@ -437,42 +394,10 @@ def call_audio_llm(api_key: str, pcm_bytes: bytes, prompt: str) -> str:
 
 
 # ==========================================================================
-# MOTHER AGENT — REASONING LLM HELPER (OpenAI direct, text-only)
+# PIPELINE CONSTANTS
 # ==========================================================================
 
-MOTHER_MODEL = "gpt-5.4"
-MOTHER_REASONING_EFFORT = "high"
-
-
-def call_reasoning_llm(
-    api_key: str,
-    system: str,
-    user: str,
-    model: str = MOTHER_MODEL,
-    reasoning_effort: str = MOTHER_REASONING_EFFORT,
-    max_completion_tokens: int = 8000,
-) -> str:
-    """
-    Call a reasoning LLM directly via OpenAI Chat Completions (no OpenRouter).
-    Used by the Mother Agent for post-stream event decisions.
-    """
-    url = "https://api.openai.com/v1/chat/completions"
-    headers = {
-        "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json",
-    }
-    payload = {
-        "model": model,
-        "messages": [
-            {"role": "system", "content": system},
-            {"role": "user", "content": user},
-        ],
-        "reasoning_effort": reasoning_effort,
-        "max_completion_tokens": max_completion_tokens,
-    }
-    resp = requests.post(url, json=payload, headers=headers, timeout=180)
-    resp.raise_for_status()
-    return resp.json()["choices"][0]["message"]["content"]
+IDLE_THRESHOLD_SEC = 3.0
 
 
 # ==========================================================================
@@ -502,6 +427,130 @@ def _find_correction_hit(text: str) -> Optional[str]:
             return word
     return None
 
+
+# V4: Tier-2 audio correction vocab — only active BEFORE the first step_completion
+# emits, since early-stream audio is coaching-heavy and uses softer correction
+# language than the Tier-1 sharp "no / stop / wrong" vocab.
+_TIER2_PHRASE_CORRECTIONS = {
+    "try again", "once more", "let's try", "that's not", "other one",
+    "click harder", "press harder",
+    "pick up the", "put down the",
+    # Removed "go to the" / "move to the" — too generic, fired on forward
+    # instructions like "go to the red toolbox and open the top compartment"
+    # (R066 t=5.0s FP, 2026-04-16).
+}
+
+
+def _find_tier2_hit(text: str) -> Optional[str]:
+    """Return the first Tier-2 phrase match, or None."""
+    lower = text.lower()
+    for phrase in _TIER2_PHRASE_CORRECTIONS:
+        if phrase in lower:
+            return phrase
+    return None
+
+
+# V4: Noise transcripts — boot-up / system phrases to skip before routing into
+# detectors. Applied once at ingest (on_audio and the cache path).
+_AUDIO_NOISE_PATTERNS = (
+    "please wait. looking for a server heartbeat",
+    "capturing.",
+    "no_speech",
+)
+
+
+def _is_noise_transcript(text: str) -> bool:
+    """True if the transcript is empty, whitespace, NO_SPEECH, or a known boot phrase."""
+    if not text:
+        return True
+    t = text.lower().strip()
+    if not t:
+        return True
+    return any(p in t for p in _AUDIO_NOISE_PATTERNS)
+
+
+# ==========================================================================
+# AUDIO TRANSCRIPT CACHE — skip setup+verify on repeat runs of the same video
+# ==========================================================================
+
+_AUDIO_CACHE_DIR = Path(__file__).resolve().parent.parent / "data" / "audio_cache"
+
+
+def _audio_cache_key(video_path: str) -> str:
+    """Derive a stable per-video stem. Grandparent dir name — all videos
+    are named Video_pitchshift.mp4 so the parent's parent is the discriminator."""
+    p = Path(video_path)
+    return p.parent.parent.name
+
+
+def audio_cache_path(video_path: str) -> Path:
+    return _AUDIO_CACHE_DIR / f"{_audio_cache_key(video_path)}.json"
+
+
+def load_audio_cache(video_path: str):
+    """Returns (transcripts_dict, audio_log) on valid cache hit; (None, None) otherwise.
+
+    Validates: file exists, size matches, mtime matches (+/- 1ms).
+    """
+    cache_file = audio_cache_path(video_path)
+    if not cache_file.exists():
+        return None, None
+    video = Path(video_path)
+    if not video.exists():
+        return None, None
+    try:
+        data = json.loads(cache_file.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return None, None
+    try:
+        stat = video.stat()
+        if data.get("video_size") != stat.st_size:
+            return None, None
+        if abs(float(data.get("video_mtime", 0.0)) - stat.st_mtime) > 1e-3:
+            return None, None
+        transcripts = {float(k): v for k, v in data["transcripts"].items()}
+        audio_log = [(float(s), float(e), t) for s, e, t in data["audio_log"]]
+    except (KeyError, TypeError, ValueError):
+        return None, None
+    return transcripts, audio_log
+
+
+def _write_audio_cache_file(path: Path, video_path: str, transcripts: dict,
+                            audio_log: list, verify_ran: bool) -> Path:
+    """Internal writer — JSON-header construction only. Caller provides the target path.
+
+    Used by save_audio_cache() for the authoritative data/audio_cache/ location,
+    and by main()'s fresh-run path for the debug sister-file beside --output.
+    """
+    path.parent.mkdir(parents=True, exist_ok=True)
+    video = Path(video_path)
+    stat = video.stat()
+    try:
+        rel = video.relative_to(Path.cwd())
+    except ValueError:
+        rel = video
+    data = {
+        "video_name": _audio_cache_key(video_path),
+        "video_relpath": str(rel).replace("\\", "/"),
+        "video_size": stat.st_size,
+        "video_mtime": stat.st_mtime,
+        "audio_chunk_sec": 5.0,
+        "cached_at": datetime.utcnow().isoformat() + "Z",
+        "verify_ran": verify_ran,
+        "transcripts": {f"{k}": v for k, v in sorted(transcripts.items())},
+        "audio_log": [[float(s), float(e), t] for s, e, t in audio_log],
+    }
+    path.write_text(json.dumps(data, indent=2), encoding="utf-8")
+    return path
+
+
+def save_audio_cache(video_path: str, transcripts: dict, audio_log: list, verify_ran: bool = True):
+    """Write the authoritative cache file to data/audio_cache/<name>.json."""
+    return _write_audio_cache_file(
+        audio_cache_path(video_path), video_path, transcripts, audio_log, verify_ran
+    )
+
+
 class Pipeline:
     """
     VLM orchestration pipeline with pre-computed audio transcription.
@@ -511,30 +560,46 @@ class Pipeline:
     """
 
     def __init__(self, harness: StreamingHarness, api_key: str, procedure: Dict[str, Any],
-                 output_path: str = "output/events.json", speed: float = 1.0):
+                 output_path: str = "output/events.json", speed: float = 1.0,
+                 openai_key: str = "", use_audio_cache: bool = False,
+                 vlm_model: str = "google/gemini-3.1-flash-image-preview"):
         self.harness = harness
         self.api_key = api_key
+        self.vlm_model = vlm_model
+        # OpenAI key — used for real-time whisper-1 transcription in on_audio
+        # when use_audio_cache=False.
+        self.openai_key = openai_key
+        # True = on_audio does dict lookup against _precomputed_audio.
+        # False = on_audio spawns a whisper-1 worker per chunk.
+        self.use_audio_cache = use_audio_cache
         self.procedure = procedure
         self.task_name = procedure.get("task") or procedure.get("task_name", "Unknown")
         self.steps = procedure["steps"]
 
-        # Step tracking — progress-pct smoother emits step_completion live via
-        # harness.emit_event() when smoothed progress crosses 90.
+        # Step tracking — detectors emit step_completion candidates directly.
         self.current_step_index = 0
         self.completed_steps: set = set()
 
-        # Real-time emission state — smoother + dedup guards
-        # maxlen=5 gives us a ~12s rolling window at ~2.5s sampling; we emit
-        # on "any 2 of last 5 at >= 85" which tolerates sporadic VLM hallucinations
-        # while still requiring corroborating evidence.
-        self._progress_history: dict = {
-            s["step_id"]: deque(maxlen=5) for s in self.steps
-        }
-        self._emitted_steps: set = set()          # step_ids that already fired live
-        self._emitted_error_timestamps: list = [] # for 5s dedup window on error_detected
+        # V5 step detection — single vote deque shared across the "current" step.
+        # Holds booleans: True when VLM asserts current_step_just_completed OR
+        # next_step_starting on that frame. Rule fires on 2+ True in last 3.
+        # Cleared when current_step_index advances (in _detect_step_completion).
+        self._step_vote_history: deque = deque(maxlen=3)
+        self._emitted_steps: set = set()
+        # V5 queue-confirm: when voter fires, we DON'T emit immediately.
+        # Instead we advance the queue and wait for the VLM to confirm the
+        # NEW current step is happening (current_step_happening=yes).
+        # Only then do we emit step_completion for the previous step.
+        # This prevents premature emission and cascade desync.
+        self._pending_step_id: Optional[int] = None
+        self._pending_step_ts: float = 0.0
+        self._pending_step_conf: float = 0.0
+        self._pending_step_rule: str = ""
+        self._pending_step_timeout: float = 15.0  # seconds before force-emit
+        self._emitted_error_timestamps: list = []  # 5s dedup on error_detected
+        self._last_frame_description: str = ""
 
-        # Observation buffer — kept unbounded for post-stream reduced Mother
-        # (idle_detected + missed step_completion catch-up).
+        # Observation buffer — unbounded, used for debugging.
         self.observation_buffer: list = []
 
         # Frame sampling
@@ -551,19 +616,25 @@ class Pipeline:
         self._precomputed_audio: dict = {}  # {start_sec: transcript}
         self._audio_chunks: list = []  # [(pcm, start, end)]
 
-        # Build steps text once for the prompt
-        self._steps_text = "\n".join(
-            f"  Step {s['step_id']}: {s['description']}" for s in self.steps
-        )
+        # V4 idle + current-video-time tracking
+        # Populated in _analyze_frame; idle worker thread polls these under lock.
+        self._current_video_time_obs = 0.0
+        self._last_hands_active_time = 0.0
+        self._first_frame_seen = False
+        self._idle_active = False
+        self._idle_start = 0.0
+        self._last_emit_time = 0.0
+
+        # Idle worker thread (1x only)
+        self._idle_thread: Optional[threading.Thread] = None
+        self._idle_stop = threading.Event()
 
         # Load prompt templates from files
         prompts_dir = Path(__file__).resolve().parent.parent / "prompts"
-        with open(prompts_dir / "vlm_prompt.txt", "r", encoding="utf-8") as f:
+        with open(prompts_dir / "vlm_prompt_test.txt", "r", encoding="utf-8") as f:
             self._vlm_template = f.read()
         with open(prompts_dir / "audio_prompt.txt", "r", encoding="utf-8") as f:
             self._audio_prompt = f.read().strip()
-        with open(prompts_dir / "mother_prompt.txt", "r", encoding="utf-8") as f:
-            self._mother_template = f.read()
 
         # Logger
         self.logger = PipelineLogger(output_path)
@@ -576,41 +647,30 @@ class Pipeline:
             "steps": self.steps,
             "speed": speed,
             "video_path": harness.video_path,
-            "model": "google/gemini-3-flash-preview",
+            "model": self.vlm_model,
             "audio_model": "openai/gpt-4o-audio-preview",
         })
 
     def _build_prompt(self, timestamp_sec: float) -> str:
         with self.lock:
             idx = self.current_step_index
-            completed = sorted(self.completed_steps)
-            # Snapshot audio history — only chunks within 10s
             audio_entries = [
                 (s, e, t) for s, e, t in self.audio_history
-                if (timestamp_sec - s) < 10.0
+                if (timestamp_sec - s) < 10.0 and not _is_noise_transcript(t)
             ]
 
-        # 2-step window: only show current + next to reduce hallucination surface.
-        if idx >= len(self.steps):
-            current_step_block = (
-                "All procedure steps appear complete. "
-                "Watch for idle/post-procedure activity."
-            )
-            next_step_block = ""
+        # Current + next step windows — VLM only sees these two, not the full procedure.
+        if idx < len(self.steps):
+            cs = self.steps[idx]
+            current_step_block = f"CURRENT STEP ({cs['step_id']}): {cs['description']}"
         else:
-            cur = self.steps[idx]
-            current_step_block = (
-                f'CURRENT STEP (focus here): Step {cur["step_id"]} — "{cur["description"]}"\n'
-                f'  Estimate current_step_progress_pct relative to visible completion of THIS step.'
-            )
-            if idx + 1 < len(self.steps):
-                nxt = self.steps[idx + 1]
-                next_step_block = (
-                    f'NEXT STEP (in case you see it starting): '
-                    f'Step {nxt["step_id"]} — "{nxt["description"]}"'
-                )
-            else:
-                next_step_block = ""
+            current_step_block = "CURRENT STEP: all steps completed"
+
+        if idx + 1 < len(self.steps):
+            ns = self.steps[idx + 1]
+            next_step_block = f"NEXT STEP ({ns['step_id']}): {ns['description']}"
+        else:
+            next_step_block = "NEXT STEP: none (last step of procedure)"
 
         if audio_entries:
             lines = []
@@ -624,13 +684,18 @@ class Pipeline:
         else:
             audio_line = ""
 
+        if self._last_frame_description:
+            previous_frame = f'Previous frame: "{self._last_frame_description}"'
+        else:
+            previous_frame = ""
+
         return self._vlm_template.format(
             task_name=self.task_name,
-            completed_steps=completed if completed else "none yet",
             current_step_block=current_step_block,
             next_step_block=next_step_block,
             audio_line=audio_line,
             timestamp_sec=f"{timestamp_sec:.1f}",
+            previous_frame=previous_frame,
         )
 
     def _parse_response(self, response: str) -> Dict[str, Any]:
@@ -656,123 +721,361 @@ class Pipeline:
             return {"status": "idle", "step_id": None, "description": response[:200], "confidence": 0.5}
         return {"status": "in_progress", "step_id": None, "description": response[:200], "confidence": 0.3}
 
-    def _decide_and_emit(self, observation: dict, audio_window: list):
-        """
-        Real-time decision layer. Runs on VLM worker thread after each observation.
-        Emits events directly via self.harness.emit_event():
-          - step_completion: when the 3-frame moving-average of current_step_progress_pct
-            crosses 90 (and the step hasn't been emitted yet).
-          - error_detected (source=video): when VLM reports error_visible.
-          - error_detected (source=audio): when the 10s audio window contains any
-            CORRECTION_KEYWORDS. Dedup'd within a 5s window so we don't spam errors.
-        """
-        ts = observation["timestamp_sec"]
+    # ======================================================================
+    # V4 DETECTORS — each produces a candidate event dict, emitted directly.
+    # ======================================================================
 
-        # ------------------------------------------------------------------
-        # (1) STEP_COMPLETION via progress-pct smoothing
-        # ------------------------------------------------------------------
-        should_emit_step = False
-        emit_step_id = None
-        emit_confidence = 0.0
-        emit_smoothed = 0.0
-        old_idx = None
+    def _on_new_observation(self, observation: dict, audio_window: list):
+        """Called after each VLM observation. Runs all video-side detectors."""
+        # Step completion (4 parallel rules)
+        step_cand = self._detect_step_completion(observation)
+        if step_cand is not None:
+            self._queue_candidate(step_cand, observation, audio_window)
 
-        with self.lock:
-            idx = self.current_step_index
-            if idx < len(self.steps):
-                step_id = self.steps[idx]["step_id"]
-                raw_pct = observation.get("current_step_progress_pct", 0)
-                try:
-                    raw_pct = int(raw_pct)
-                except (TypeError, ValueError):
-                    raw_pct = 0
-                raw_pct = max(0, min(100, raw_pct))
+        # Video-side error
+        video_err_cand = self._detect_video_error(observation)
+        if video_err_cand is not None:
+            self._queue_candidate(video_err_cand, observation, audio_window)
 
-                hist = self._progress_history[step_id]
-                hist.append(raw_pct)
-                # "Any 2 of last 5 at >= 85" — tolerant of sporadic VLM 100% hits
-                # while still requiring corroborating evidence within ~12s.
-                high_hits = sum(1 for p in hist if p >= 85)
-                if high_hits >= 2 and step_id not in self._emitted_steps:
-                    smoothed = sum(hist) / len(hist)
-                    should_emit_step = True
-                    emit_step_id = step_id
-                    emit_confidence = min(1.0, max(0.5, smoothed / 100.0))
-                    emit_smoothed = smoothed
-                    old_idx = idx
-                    self._emitted_steps.add(step_id)
-                    self.completed_steps.add(step_id)
-                    self.current_step_index += 1
-
-        if should_emit_step:
-            event = {
-                "timestamp_sec": ts,
+    def _make_step_candidate(self, ts: float, step_id: int, conf: float,
+                             rule: str, observation: dict) -> dict:
+        return {
+            "timestamp_sec": float(ts),
+            "type": "step_completion",
+            "detector_source": f"step_tracker:{rule}",
+            "evidence_text": (
+                f"Step {step_id} implicated by rule {rule}; "
+                f"description='{observation.get('description', '')[:120]}'"
+            ),
+            "event": {
+                "timestamp_sec": float(ts),
                 "type": "step_completion",
-                "step_id": int(emit_step_id),
-                "confidence": round(emit_confidence, 3),
+                "step_id": int(step_id),
+                "confidence": round(float(conf), 3),
                 "source": "video",
-                "description": f"Step {emit_step_id} end-state visible (smoothed progress {emit_smoothed:.0f}%)",
-            }
-            try:
-                self.harness.emit_event(event)
-                self.logger.log(ts, "event_emitted", {"event": event})
-                self.logger.log(ts, "state_change", {
-                    "field": "current_step_index",
-                    "old": old_idx,
-                    "new": old_idx + 1,
-                    "advanced_step_id": emit_step_id,
-                    "trigger": {"progress_smoothed": round(emit_smoothed, 1)},
-                })
-            except ValueError as e:
-                self.logger.log(ts, "vlm_error", {"error": f"emit_event rejected step: {e}"})
+                "description": (
+                    f"Step {step_id} end-state inferred via {rule}"
+                ),
+                "vlm_description": observation.get("description", ""),
+            },
+        }
 
-        # ------------------------------------------------------------------
-        # (2) ERROR_DETECTED from VLM error_visible
-        # ------------------------------------------------------------------
-        err_vis = observation.get("error_visible")
-        if err_vis and isinstance(err_vis, str) and err_vis.strip().lower() not in ("", "null", "none"):
-            self._maybe_emit_error(ts, f"VLM: {err_vis.strip()}", "video")
-
-        # ------------------------------------------------------------------
-        # (3) ERROR_DETECTED from audio correction keywords in 10s window
-        # ------------------------------------------------------------------
-        for (a_start, _a_end, transcript) in audio_window:
-            if not transcript:
-                continue
-            hit = _find_correction_hit(transcript)
-            if hit:
-                # Anchor the error timestamp at the audio chunk start — closer
-                # to when the correction was spoken than the current video time.
-                self._maybe_emit_error(
-                    float(a_start),
-                    f"Audio correction ('{hit}'): {transcript.strip()[:120]}",
-                    "audio",
-                )
-                break
-
-    def _maybe_emit_error(self, ts: float, description: str, source: str):
-        """5-second dedup on error_detected emissions, then harness.emit_event()."""
-        with self.lock:
-            if any(abs(ts - t) < 5.0 for t in self._emitted_error_timestamps):
-                return
-            self._emitted_error_timestamps.append(ts)
-
-        event = {
+    def _make_video_error_candidate(self, ts: float, err_visible: str,
+                                    err_type: str, conf: float,
+                                    observation: dict,
+                                    source: str = "video") -> dict:
+        return {
             "timestamp_sec": float(ts),
             "type": "error_detected",
-            "confidence": 0.7,
-            "source": source,
-            "description": description,
+            "detector_source": "video_error_detector",
+            "evidence_text": (
+                f"VLM reports visible error ('{err_visible[:80]}', type={err_type}); "
+                f"description='{observation.get('description', '')[:80]}'"
+            ),
+            "event": {
+                "timestamp_sec": float(ts),
+                "type": "error_detected",
+                "error_type": err_type,
+                "severity": "warning",
+                "confidence": round(float(conf), 3),
+                "source": source,
+                "description": f"VLM: {err_visible[:200]}",
+            },
         }
+
+    def _make_audio_error_candidate(self, ts: float, transcript: str,
+                                    hit: str, tier: int) -> dict:
+        return {
+            "timestamp_sec": float(ts),
+            "type": "error_detected",
+            "detector_source": f"audio_error_detector:tier{tier}",
+            "evidence_text": (
+                f"Audio tier-{tier} correction '{hit}' in transcript: "
+                f"\"{transcript.strip()[:120]}\""
+            ),
+            "event": {
+                "timestamp_sec": float(ts),
+                "type": "error_detected",
+                "error_type": "wrong_action",
+                "severity": "warning",
+                "confidence": 0.65 if tier == 1 else 0.55,
+                "source": "audio",
+                "description": f"Audio correction ('{hit}'): {transcript.strip()[:200]}",
+            },
+        }
+
+    def _make_idle_candidate(self, ts_mid: float, idle_start: float,
+                             idle_end: float) -> dict:
+        duration = max(0.0, idle_end - idle_start)
+        return {
+            "timestamp_sec": float(ts_mid),
+            "type": "idle_detected",
+            "detector_source": "idle_detector",
+            "evidence_text": (
+                f"No hands_active observations between {idle_start:.1f}s and "
+                f"{idle_end:.1f}s ({duration:.1f}s span)"
+            ),
+            "event": {
+                "timestamp_sec": float(ts_mid),
+                "type": "idle_detected",
+                "confidence": 0.7,
+                "source": "video",
+                "description": (
+                    f"Technician idle from {idle_start:.1f}-{idle_end:.1f}s "
+                    f"({duration:.1f}s)"
+                ),
+            },
+        }
+
+    def _detect_step_completion(self, observation: dict) -> Optional[dict]:
+        """Queue-confirm step detector.
+
+        When the voter fires (2-of-3 on completed/next_starting), we DON'T
+        emit immediately. Instead we store the step as "pending", advance
+        the queue so the VLM sees the NEXT step, and wait for the VLM to
+        confirm the new step is happening (current_step_happening=yes).
+        Only then do we emit step_completion for the previous step.
+
+        This prevents cascade desync: step N can't be emitted too early
+        because we need proof that step N+1 has actually started.
+        """
+        ts = float(observation["timestamp_sec"])
+        happening = bool(observation.get("current_step_happening", False))
+        completed = bool(observation.get("current_step_just_completed", False))
+        next_starting = bool(observation.get("next_step_starting", False))
+        signal = completed or next_starting
+
+        with self.lock:
+            # --- Normal voting for current step ---
+            idx = self.current_step_index
+            if idx >= len(self.steps):
+                return None
+            current_step_id = self.steps[idx]["step_id"]
+            if current_step_id in self._emitted_steps:
+                return None
+
+            self._step_vote_history.append(signal)
+
+            if sum(1 for v in self._step_vote_history if v) >= 2:
+                try:
+                    conf = float(observation.get("confidence", 0.85))
+                except (TypeError, ValueError):
+                    conf = 0.85
+                conf = max(0.5, min(1.0, conf))
+                if completed and next_starting:
+                    rule_tag = "both_signals"
+                elif completed:
+                    rule_tag = "current_completed"
+                else:
+                    rule_tag = "next_starting"
+
+                # Emit immediately — queue-confirm disabled.
+                # Advance step index and clear voter for next step.
+                self._emitted_steps.add(current_step_id)
+                self.completed_steps.add(current_step_id)
+                while (self.current_step_index < len(self.steps)
+                       and self.steps[self.current_step_index]["step_id"]
+                       in self._emitted_steps):
+                    self.current_step_index += 1
+                self._step_vote_history.clear()
+                return self._make_step_candidate(
+                    ts, current_step_id, conf, rule_tag, observation
+                )
+
+        return None
+
+    def _detect_video_error(self, observation: dict) -> Optional[dict]:
+        """
+        Emit a video-error candidate only when:
+          - error_visible is a non-empty string AND
+          - error_type is a valid VALID_ERROR_TYPES value AND
+          - confidence >= 0.6 AND
+          - audio corroboration exists within ±10s OR VLM confidence >= 0.80.
+
+        The audio gate aligns VLM detections with the GT's implicit definition
+        (error = instructor correction) while preserving high-confidence safety
+        violations the instructor doesn't vocalize.
+        """
+        ts = float(observation["timestamp_sec"])
+        err_vis = observation.get("error_visible")
+        err_type = observation.get("error_type")
+        try:
+            conf = float(observation.get("confidence", 0.5))
+        except (TypeError, ValueError):
+            conf = 0.5
+
+        if not err_vis or not isinstance(err_vis, str):
+            return None
+        if err_vis.strip().lower() in ("", "null", "none", "unclear"):
+            return None
+        if err_type not in StreamingHarness.VALID_ERROR_TYPES:
+            return None
+        if conf < 0.6:
+            return None
+
+        with self.lock:
+            # 5s dedup against already-emitted error timestamps.
+            if any(abs(ts - t) < 5.0 for t in self._emitted_error_timestamps):
+                return None
+            # Audio cross-reference: check if any recent transcript contains
+            # correction vocabulary (Tier-1 or Tier-2) within ±10s.
+            audio_corroborated = any(
+                _find_correction_hit(t) or _find_tier2_hit(t)
+                for s, e, t in self.audio_history
+                if abs(ts - s) < 10.0 and not _is_noise_transcript(t)
+            )
+
+        if audio_corroborated:
+            # Both modalities agree — boost confidence, tag source as "both".
+            conf = min(1.0, conf + 0.15)
+            return self._make_video_error_candidate(
+                ts, err_vis.strip(), err_type, conf, observation, source="both"
+            )
+        elif conf >= 0.80:
+            # VLM-only but very confident — likely a real safety violation
+            # the instructor didn't vocalize. Let it through.
+            return self._make_video_error_candidate(
+                ts, err_vis.strip(), err_type, conf, observation
+            )
+        else:
+            # VLM-only at moderate confidence — suppress to align with GT.
+            return None
+
+    def _on_new_transcript(self, transcript_text: str, start_sec: float,
+                          end_sec: float):
+        """Audio-error detector runs here. Called from transcribe workers + cache path."""
+        if _is_noise_transcript(transcript_text):
+            return
+
+        with self.lock:
+            first_step_emitted = bool(self._emitted_steps)
+
+        # Tier 1 — always active.
+        hit = _find_correction_hit(transcript_text)
+        tier = 1
+        # Tier 2 — only before the first step_completion is confirmed.
+        if not hit and not first_step_emitted:
+            hit = _find_tier2_hit(transcript_text)
+            tier = 2 if hit else tier
+
+        if not hit:
+            return
+
+        # 5s dedup in video-time.
+        with self.lock:
+            if any(abs(start_sec - t) < 5.0 for t in self._emitted_error_timestamps):
+                return
+
+        cand = self._make_audio_error_candidate(start_sec, transcript_text, hit, tier)
+        audio_window = [(start_sec, end_sec, transcript_text)]
+        self._queue_candidate(cand, observation=None, audio_window=audio_window)
+
+    # ======================================================================
+    # DIRECT EMIT
+    # ======================================================================
+
+    def _queue_candidate(self, candidate: dict, observation: Optional[dict],
+                         audio_window: list):
+        """Emit a detector candidate directly to the harness.
+
+        Name retained for call-site stability. There is no queue anymore —
+        every candidate becomes a live harness.emit_event() call. Mother
+        verifier was retired after three 1x R066 runs showed error_f1 dropped
+        from 0.500 (live emit) to 0.000 (post-mother). See shipping notes.
+        """
+        event = candidate["event"]
+        ts = float(event.get("timestamp_sec", 0.0))
         try:
             self.harness.emit_event(event)
-            self.logger.log(ts, "event_emitted", {"event": event})
+            with self.lock:
+                if event.get("type") == "step_completion":
+                    sid = int(event.get("step_id"))
+                    self._emitted_steps.add(sid)
+                    self.completed_steps.add(sid)
+                elif event.get("type") == "error_detected":
+                    self._emitted_error_timestamps.append(ts)
+            self.logger.log(ts, "event_emitted", {
+                "event": event, "candidate": candidate,
+            })
         except ValueError as e:
-            self.logger.log(ts, "vlm_error", {"error": f"emit_event rejected error: {e}"})
+            self.logger.log(ts, "emit_rejected", {
+                "reason": f"harness rejected: {e}",
+                "candidate": candidate,
+            })
+
+    def _idle_worker(self):
+        """Background idle detector. Polls once per wall-second.
+
+        Uses video-time deltas (not wall-time) so it stays correct at non-1x speeds.
+        A span is closed when hands_active returns AND has been absent >= IDLE_THRESHOLD_SEC.
+        """
+        while not self._idle_stop.is_set():
+            # Poll at wall-second cadence; at 1x this ≈ 1 video-second.
+            if self._idle_stop.wait(1.0):
+                break
+
+            with self.lock:
+                seen = self._first_frame_seen
+                current = self._current_video_time_obs
+                last_active = self._last_hands_active_time
+                idle_active = self._idle_active
+                idle_start = self._idle_start
+
+            if not seen:
+                continue
+
+            gap = current - last_active
+            if not idle_active and gap >= IDLE_THRESHOLD_SEC:
+                with self.lock:
+                    self._idle_active = True
+                    self._idle_start = last_active
+            elif idle_active and gap < IDLE_THRESHOLD_SEC:
+                idle_end = current
+                ts_mid = (idle_start + idle_end) / 2.0
+                with self.lock:
+                    self._idle_active = False
+                    audio_snap = [
+                        (s, e, t) for s, e, t in self.audio_history
+                        if abs(ts_mid - s) < 10.0 and not _is_noise_transcript(t)
+                    ]
+                cand = self._make_idle_candidate(ts_mid, idle_start, idle_end)
+                self._queue_candidate(cand, observation=None, audio_window=audio_snap)
+
+        # On shutdown, close any open idle span so we don't lose the final one.
+        with self.lock:
+            idle_active = self._idle_active
+            idle_start = self._idle_start
+            current = self._current_video_time_obs
+            self._idle_active = False
+        if idle_active and current > idle_start + IDLE_THRESHOLD_SEC:
+            ts_mid = (idle_start + current) / 2.0
+            cand = self._make_idle_candidate(ts_mid, idle_start, current)
+            self._queue_candidate(cand, observation=None, audio_window=[])
+
+    def start_idle_worker(self):
+        """Spawn the idle watcher thread (1x only — the watcher's 1s polling
+        doesn't scale to higher speeds). No-op at 2x+."""
+        if self._speed >= 2.0:
+            return
+        if self._idle_thread is not None:
+            return
+        self._idle_stop.clear()
+        self._idle_thread = threading.Thread(
+            target=self._idle_worker, name="idle_worker", daemon=True,
+        )
+        self._idle_thread.start()
+
+    def stop_idle_worker(self):
+        """Signal the idle watcher and join. No queue to drain anymore."""
+        if self._idle_thread is None:
+            return
+        self._idle_stop.set()
+        self._idle_thread.join(timeout=5.0)
+        self._idle_thread = None
 
     def _analyze_frame(self, timestamp_sec: float, frame_base64: str):
         """
-        Real-time pipeline: VLM observes, sub-mother decides, harness.emit_event() fires live.
+        Real-time pipeline: VLM observes, detectors decide, harness.emit_event() fires live.
         """
         try:
             prompt = self._build_prompt(timestamp_sec)
@@ -782,7 +1085,7 @@ class Pipeline:
             })
 
             t0 = time.time()
-            response = call_vlm(self.api_key, frame_base64, prompt)
+            response = call_vlm(self.api_key, frame_base64, prompt, model=self.vlm_model)
             latency_ms = round((time.time() - t0) * 1000)
             self._vlm_latencies.append(latency_ms)
 
@@ -794,44 +1097,131 @@ class Pipeline:
                 "parsed": parsed,
             })
 
-            # Extract observer fields with safe fallbacks (missing fields → empty)
-            visual_cues = parsed.get("visual_cues", [])
-            if not isinstance(visual_cues, list):
-                visual_cues = [str(visual_cues)]
+            # V5 observer fields — 7 fields + timestamp. VLM produces only
+            # booleans, enums, and free text — no step ids, no progress %.
+            # hands_active: fail-safe to True when VLM omits it — spurious
+            # idle is worse than spurious activity.
+            raw_hands_active = parsed.get("hands_active")
+            if raw_hands_active is None:
+                hands_active = True
+            else:
+                hands_active = bool(raw_hands_active)
 
-            # current_step_progress_pct: coerce to int in [0, 100]; default 0 on missing/bad
-            raw_pct = parsed.get("current_step_progress_pct", 0)
+            err_type = parsed.get("error_type")
+            if err_type not in StreamingHarness.VALID_ERROR_TYPES:
+                err_type = None
+
             try:
-                progress_pct = max(0, min(100, int(raw_pct)))
+                confidence = float(parsed.get("confidence", 0.5))
             except (TypeError, ValueError):
-                progress_pct = 0
+                confidence = 0.5
+            confidence = max(0.0, min(1.0, confidence))
 
             observation = {
                 "timestamp_sec": timestamp_sec,
-                "hands": str(parsed.get("hands", "")),
-                "objects": str(parsed.get("objects", "")),
-                "action": str(parsed.get("action", parsed.get("description", ""))),
-                "visual_cues": visual_cues,
-                "end_state_visible": str(parsed.get("end_state_visible", "unclear")).lower(),
-                "heard_in_audio_matches_current_step": bool(
-                    parsed.get("heard_in_audio_matches_current_step", False)
+                "current_step_happening": str(
+                    parsed.get("current_step_happening", "no")
+                ).lower().strip() == "yes",
+                "current_step_just_completed": bool(
+                    parsed.get("current_step_just_completed", False)
                 ),
-                "current_step_progress_pct": progress_pct,
+                "next_step_starting": bool(
+                    parsed.get("next_step_starting", False)
+                ),
+                "hands_active": hands_active,
                 "error_visible": parsed.get("error_visible"),
-                "confidence": float(parsed.get("confidence", 0.5)),
+                "error_type": err_type,
+                "confidence": confidence,
+                "description": str(parsed.get("description", "")),
                 "raw_response": response[:1000],
             }
 
+            self._last_frame_description = observation.get("description", "")
+
             with self.lock:
                 self.observation_buffer.append(observation)
-                audio_snapshot = list(self.audio_history)
-            self._decide_and_emit(observation, audio_snapshot)
+                audio_snapshot = [
+                    (s, e, t) for s, e, t in self.audio_history
+                    if not _is_noise_transcript(t)
+                ]
+                self._current_video_time_obs = max(
+                    self._current_video_time_obs, float(timestamp_sec)
+                )
+                if not self._first_frame_seen:
+                    self._first_frame_seen = True
+                    # Seed last-active at first frame so early frames don't auto-idle.
+                    self._last_hands_active_time = float(timestamp_sec)
+                if hands_active:
+                    self._last_hands_active_time = float(timestamp_sec)
+
+            self._on_new_observation(observation, audio_snapshot)
 
         except Exception as e:
             self.logger.log(timestamp_sec, "vlm_error", {"error": str(e)})
         finally:
             with self.lock:
                 self.pending_calls -= 1
+
+    def _transcribe_chunk(self, audio_bytes: bytes, start_sec: float, end_sec: float):
+        """Thread body: whisper-1 + hallucination filter on a single 5s audio chunk.
+
+        Mutates _precomputed_audio / audio_log / audio_history / recent_transcript
+        under self.lock so on_frame() / _build_prompt() see consistent state.
+        Called by on_audio() when real-time mode is active (self.openai_key set).
+        """
+        try:
+            self.logger.log(start_sec, "audio_request", {
+                "start_sec": start_sec,
+                "end_sec": end_sec,
+                "model": "whisper-1",
+                "source": "realtime",
+            })
+
+            t0 = time.time()
+            try:
+                raw = call_whisper(self.openai_key, audio_bytes, "whisper-1")
+            except Exception as e:
+                self.logger.log(start_sec, "audio_error", {
+                    "start_sec": start_sec,
+                    "end_sec": end_sec,
+                    "error": str(e),
+                })
+                with self.lock:
+                    self.audio_log.append((start_sec, end_sec, "NO_SPEECH"))
+                return
+            latency_ms = round((time.time() - t0) * 1000)
+            self._audio_latencies.append(latency_ms)
+
+            filtered, was_filtered = _filter_transcript(raw)
+            is_speech = not is_no_speech(filtered)
+            noise = _is_noise_transcript(filtered)
+
+            with self.lock:
+                self.audio_log.append((start_sec, end_sec, filtered))
+                if is_speech and not noise:
+                    self._precomputed_audio[start_sec] = filtered
+                    self.recent_transcript = filtered
+                    self.recent_transcript_time = start_sec
+                    self.audio_history.append((start_sec, end_sec, filtered))
+
+            self.logger.log(start_sec, "audio_response", {
+                "start_sec": start_sec,
+                "end_sec": end_sec,
+                "transcript": filtered,
+                "raw": raw[:200],
+                "latency_ms": latency_ms,
+                "is_speech": is_speech,
+                "was_filtered": was_filtered,
+                "source": "realtime",
+            })
+
+            # V4 audio-error detector — fires on Tier-1 keywords always,
+            # Tier-2 only before the first step_completion is confirmed.
+            if is_speech and not noise:
+                self._on_new_transcript(filtered, start_sec, end_sec)
+        finally:
+            with self.lock:
+                self.pending_audio_calls -= 1
 
     def _transcribe_audio(self, audio_bytes: bytes, start_sec: float, end_sec: float):
         try:
@@ -993,202 +1383,6 @@ class Pipeline:
         print(f"  [VERIFY] Done. {corrections} corrections. Final: {speech_count} speech / {total - speech_count} silence\n")
 
     # ------------------------------------------------------------------
-    # MOTHER AGENT — BATCH-AT-END REASONING
-    # ------------------------------------------------------------------
-
-    def run_mother_batch(self, openai_key: str, video_duration_sec: float):
-        """
-        Reduced Mother Agent V2 (post-stream catch-up): runs once after harness.run()
-        completes. Live emission already handled step_completion + error_detected during
-        the stream. This pass only finds RETROSPECTIVE events:
-          - idle_detected (needs hindsight — "nothing happened for 5+s")
-          - step_completion for step_ids NOT in self._emitted_steps (live missed them)
-
-        Events are emitted via self.harness.emit_event() so detection_delay_sec is
-        computed honestly by the harness. Retrospective delays will be large but GT
-        tolerates this class of latency.
-        """
-        obs_count = len(self.observation_buffer)
-        speech_audio = [(s, e, t) for s, e, t in self.audio_log
-                        if t and "NO_SPEECH" not in t.upper() and t != "GARBAGE"]
-        audio_count = len(speech_audio)
-
-        already_emitted = sorted(self._emitted_steps)
-        print(f"  [MOTHER] Catch-up pass: {obs_count} obs + {audio_count} audio, "
-              f"already-emitted steps={already_emitted} ({video_duration_sec:.1f}s video)...")
-
-        if obs_count == 0:
-            print("  [MOTHER] No observations — skipping.")
-            self.logger.log(video_duration_sec, "mother_batch_error",
-                            {"error": "no observations"})
-            return
-
-        # Interleave observations + audio into a single chronological stream.
-        def _format_obs_block(obs: dict) -> str:
-            ts = obs.get("timestamp_sec", 0.0)
-            hands = obs.get("hands", "") or "-"
-            objects = obs.get("objects", "") or "-"
-            action = obs.get("action", "") or "-"
-            cues = obs.get("visual_cues", []) or []
-            cues_str = "; ".join(str(c) for c in cues) if isinstance(cues, list) else str(cues)
-            end_state = obs.get("end_state_visible", "unclear") or "unclear"
-            progress = obs.get("current_step_progress_pct")
-            error_visible = obs.get("error_visible")
-            conf = obs.get("confidence", 0.0)
-            lines = [
-                f"  [t={ts:6.1f}s | obs | conf={conf:.2f}]",
-                f"    hands: {hands}",
-                f"    objects: {objects}",
-                f"    action: {action}",
-            ]
-            if cues_str:
-                lines.append(f"    visual_cues: {cues_str}")
-            lines.append(f"    end_state_visible: {end_state}")
-            if progress is not None:
-                lines.append(f"    current_step_progress_pct: {progress}")
-            if error_visible and str(error_visible).lower() not in ("none", "null", ""):
-                lines.append(f"    error_visible: {error_visible}")
-            return "\n".join(lines)
-
-        stream_items = []
-        for obs in self.observation_buffer:
-            stream_items.append((float(obs.get("timestamp_sec", 0.0)), "obs", obs))
-        for s, e, t in speech_audio:
-            stream_items.append((float(s), "audio", (s, e, t)))
-        stream_items.sort(key=lambda x: x[0])
-
-        stream_lines = []
-        for _, kind, payload in stream_items:
-            if kind == "obs":
-                stream_lines.append(_format_obs_block(payload))
-            else:
-                s, e, t = payload
-                stream_lines.append(f'  [t={s:6.1f}-{e:.1f}s | audio]\n    "{t}"')
-        stream_text = "\n".join(stream_lines) if stream_lines else "  (no stream entries)"
-
-        # Build slim catch-up prompt
-        system_prompt = self._mother_template.format(
-            task_name=self.task_name,
-            steps_text=self._steps_text,
-            stream_text=stream_text,
-            video_duration=f"{video_duration_sec:.1f}",
-            already_emitted_step_ids=already_emitted,
-        )
-
-        self.logger.log(video_duration_sec, "mother_batch_request", {
-            "model": MOTHER_MODEL,
-            "reasoning_effort": MOTHER_REASONING_EFFORT,
-            "observation_count": obs_count,
-            "audio_count": audio_count,
-            "already_emitted_step_ids": already_emitted,
-            "prompt_len": len(system_prompt),
-            "prompt": system_prompt,
-        })
-
-        t0 = time.time()
-        try:
-            response = call_reasoning_llm(
-                openai_key,
-                system=system_prompt,
-                user="Analyze the stream above and produce the retrospective events JSON.",
-                model=MOTHER_MODEL,
-                reasoning_effort=MOTHER_REASONING_EFFORT,
-            )
-        except Exception as exc:
-            elapsed = time.time() - t0
-            self.logger.log(video_duration_sec, "mother_batch_error", {
-                "error": f"API call failed: {exc}",
-                "elapsed_sec": round(elapsed, 2),
-            })
-            print(f"  [MOTHER] ERROR after {elapsed:.1f}s: {exc}")
-            return
-
-        elapsed = time.time() - t0
-
-        # Parse response (strip markdown fences same as _parse_response)
-        cleaned = response.strip()
-        cleaned = re.sub(r"^```(?:json)?\s*", "", cleaned)
-        cleaned = re.sub(r"\s*```$", "", cleaned)
-        cleaned = cleaned.strip()
-
-        try:
-            parsed = json.loads(cleaned)
-            raw_events = parsed.get("events", [])
-            if not isinstance(raw_events, list):
-                raise ValueError(f"'events' is not a list: {type(raw_events).__name__}")
-        except (json.JSONDecodeError, ValueError) as exc:
-            self.logger.log(video_duration_sec, "mother_batch_error", {
-                "error": f"JSON parse: {exc}",
-                "elapsed_sec": round(elapsed, 2),
-                "response": response,
-            })
-            print(f"  [MOTHER] JSON parse failed after {elapsed:.1f}s: {exc}")
-            return
-
-        # Filter: only accept idle_detected OR step_completion with a NEW step_id.
-        # Emit each live via harness.emit_event() so detection_delay_sec is computed.
-        allowed_types = {"idle_detected", "step_completion"}
-        emitted_count = 0
-        skipped_count = 0
-
-        for ev in raw_events:
-            if not isinstance(ev, dict):
-                skipped_count += 1
-                continue
-            ev_type = ev.get("type", "")
-            if ev_type not in allowed_types:
-                skipped_count += 1
-                continue
-            try:
-                ts = float(ev.get("timestamp_sec", 0.0))
-            except (TypeError, ValueError):
-                skipped_count += 1
-                continue
-
-            out = {
-                "timestamp_sec": ts,
-                "type": ev_type,
-                "confidence": float(ev.get("confidence", 0.5)),
-                "description": str(ev.get("description", "")),
-                "source": "both",
-            }
-
-            if ev_type == "step_completion":
-                step_id = ev.get("step_id")
-                try:
-                    step_id_int = int(step_id)
-                except (TypeError, ValueError):
-                    skipped_count += 1
-                    continue
-                if step_id_int in self._emitted_steps:
-                    skipped_count += 1
-                    continue
-                out["step_id"] = step_id_int
-                with self.lock:
-                    self._emitted_steps.add(step_id_int)
-                    self.completed_steps.add(step_id_int)
-
-            try:
-                self.harness.emit_event(out)
-                self.logger.log(ts, "event_emitted", {"event": out, "source_mother": True})
-                emitted_count += 1
-            except ValueError as e:
-                self.logger.log(ts, "mother_batch_error", {
-                    "error": f"emit_event rejected: {e}", "event": out,
-                })
-                skipped_count += 1
-
-        self.logger.log(video_duration_sec, "mother_batch_response", {
-            "elapsed_sec": round(elapsed, 2),
-            "response_len": len(response),
-            "events_count": emitted_count,
-            "skipped_count": skipped_count,
-            "response": response,
-        })
-        print(f"  [MOTHER] Done in {elapsed:.1f}s — emitted {emitted_count} retrospective "
-              f"events ({skipped_count} skipped)")
-
-    # ------------------------------------------------------------------
     # HARNESS CALLBACKS
     # ------------------------------------------------------------------
 
@@ -1217,9 +1411,30 @@ class Pipeline:
         thread.start()
 
     def on_audio(self, audio_bytes: bytes, start_sec: float, end_sec: float):
-        """Called by the harness for each audio chunk. Looks up pre-computed transcript."""
+        """Called by the harness for each 5s audio chunk.
+
+        Real-time mode (use_audio_cache=False — default):
+            Spawn a thread that calls whisper-1 + hallucination filter, then
+            appends the result to audio_log / audio_history / _precomputed_audio.
+            Does NOT block the harness timeline.
+        Cache mode (use_audio_cache=True — --use-audio-cache path):
+            Dict lookup into the pre-populated _precomputed_audio; update the
+            sliding audio_history window for the VLM prompt.
+        """
+        if not self.use_audio_cache and self.openai_key:
+            # Real-time: spawn a thread so we don't block the harness timeline.
+            with self.lock:
+                self.pending_audio_calls += 1
+            threading.Thread(
+                target=self._transcribe_chunk,
+                args=(audio_bytes, start_sec, end_sec),
+                daemon=True,
+            ).start()
+            return
+
+        # Cache mode — existing dict-lookup behavior (--use-audio-cache).
         transcript = self._precomputed_audio.get(start_sec, "")
-        if transcript:
+        if transcript and not _is_noise_transcript(transcript):
             with self.lock:
                 self.recent_transcript = transcript
                 self.recent_transcript_time = start_sec
@@ -1228,16 +1443,35 @@ class Pipeline:
                 "start_sec": start_sec, "end_sec": end_sec,
                 "transcript": transcript, "source": "precomputed",
             })
+            # V4: feed transcript into audio-error detector.
+            self._on_new_transcript(transcript, start_sec, end_sec)
         else:
             self.logger.log(start_sec, "audio_received", {
                 "start_sec": start_sec, "end_sec": end_sec,
-                "transcript": "NO_SPEECH", "source": "precomputed",
+                "transcript": transcript or "NO_SPEECH", "source": "precomputed",
             })
 
 
 # ==========================================================================
 # MAIN ENTRY POINT
 # ==========================================================================
+
+def _apply_timestamp_prefix(output_path: str) -> str:
+    """Prepend YYYYMMDD_HHMM_ to the filename stem so runs sort chronologically.
+
+    Idempotent: if the stem already starts with an 8-digit date + 4-digit time,
+    the path is returned unchanged.
+
+    Example:
+        output/r066_realtime.json       -> output/20260416_0132_r066_realtime.json
+        output/20260416_0132_r066.json  -> output/20260416_0132_r066.json (unchanged)
+    """
+    p = Path(output_path)
+    if re.match(r"^\d{8}_\d{4}_", p.stem):
+        return output_path
+    ts = datetime.now().strftime("%Y%m%d_%H%M")
+    return str(p.parent / f"{ts}_{p.stem}{p.suffix}")
+
 
 def main():
     parser = argparse.ArgumentParser(description="VLM Orchestrator Pipeline")
@@ -1251,8 +1485,22 @@ def main():
     parser.add_argument("--audio-chunk-sec", type=float, default=5.0,
                         help="Audio chunk duration in seconds (default: 5)")
     parser.add_argument("--api-key", help="OpenRouter API key (or set OPENROUTER_API_KEY)")
+    parser.add_argument(
+        "--model",
+        default="google/gemini-3.1-flash-image-preview",
+        help="VLM model string passed to OpenRouter (default: google/gemini-3.1-flash-image-preview).",
+    )
     parser.add_argument("--dry-run", action="store_true", help="Validate inputs only")
+    parser.add_argument(
+        "--use-audio-cache",
+        action="store_true",
+        help="Opt-in: load pre-built transcripts from data/audio_cache/<video>.json "
+             "instead of re-transcribing. Errors out if no valid cache exists. "
+             "(Default: always re-transcribe with OPENAI_API and save a debug copy "
+             "next to --output.)",
+    )
     args = parser.parse_args()
+    args.output = _apply_timestamp_prefix(args.output)
 
     # Load procedure
     print("=" * 60)
@@ -1280,17 +1528,26 @@ def main():
         print(f"  ERROR: Video not found: {args.video}")
         sys.exit(1)
 
-    api_key = args.api_key or os.getenv("OPENROUTER_API_KEY")
-    if not api_key:
-        print("  ERROR: Set OPENROUTER_API_KEY or pass --api-key")
-        sys.exit(1)
-
-    # Load .env for audio API keys
+    # Load .env FIRST so subsequent os.getenv() calls can see every key,
+    # including OPENROUTER_API_KEY / MY_OPENROUTER_API / OPENAI_API.
     try:
         from dotenv import load_dotenv
         load_dotenv()
     except ImportError:
         pass
+
+    # VLM/OpenRouter key — accept any of (--api-key, OPENROUTER_API_KEY, MY_OPENROUTER_API).
+    # The .env in this repo historically uses MY_OPENROUTER_API; keep that working
+    # without forcing the user to rename or export manually.
+    api_key = (
+        args.api_key
+        or os.getenv("OPENROUTER_API_KEY")
+        or os.getenv("MY_OPENROUTER_API")
+    )
+    if not api_key:
+        print("  ERROR: Set OPENROUTER_API_KEY (or MY_OPENROUTER_API in .env) or pass --api-key")
+        sys.exit(1)
+
     openai_key = os.getenv("OPENAI_API", "")
     openrouter_key = os.getenv("MY_OPENROUTER_API", "") or api_key
 
@@ -1303,31 +1560,85 @@ def main():
         audio_chunk_sec=args.audio_chunk_sec,
     )
 
-    pipeline = Pipeline(harness, api_key, procedure, output_path=args.output, speed=args.speed)
+    pipeline = Pipeline(
+        harness, api_key, procedure,
+        output_path=args.output, speed=args.speed,
+        # openai_key drives real-time whisper-1 transcription in on_audio.
+        # use_audio_cache controls whether on_audio uses the dict lookup
+        # path vs the real-time whisper-1 path.
+        openai_key=openai_key,
+        use_audio_cache=args.use_audio_cache,
+        vlm_model=args.model,
+    )
 
-    # STEP 1: Setup — pre-compute audio transcripts with whisper-1
-    if openai_key:
-        pipeline.precompute_audio(args.video, openai_key)
-
-        # STEP 2: Verify — ensemble voting on all chunks
-        if openrouter_key:
-            pipeline.verify_audio(openai_key, openrouter_key)
-        else:
-            print("  [VERIFY] Skipped — MY_OPENROUTER_API not set\n")
+    # STEP 1: Audio — default is real-time (whisper-1 + filter inline in on_audio).
+    #         --use-audio-cache loads the authoritative cache at data/audio_cache/<video>.json.
+    if args.use_audio_cache:
+        cached_transcripts, cached_audio_log = load_audio_cache(args.video)
+        if cached_transcripts is None:
+            parser.error(
+                f"--use-audio-cache requested, but no valid cache at "
+                f"{audio_cache_path(args.video)}. Build one with "
+                f"'python scripts/cache_audio.py', or drop --use-audio-cache to "
+                f"transcribe in real-time."
+            )
+        pipeline._precomputed_audio = cached_transcripts
+        pipeline.audio_log = list(cached_audio_log)
+        print(
+            f"  [CACHE] HIT {audio_cache_path(args.video).name} "
+            f"— {len(cached_transcripts)} speech chunks, "
+            f"{len(cached_audio_log)} total. on_audio() will lookup, not transcribe.\n"
+        )
+    elif openai_key:
+        print(
+            f"  [AUDIO] Real-time transcription enabled (whisper-1 + hallucination filter).\n"
+            f"          Chunks stream in via on_audio() during playback; no upfront batch.\n"
+            f"          For ensemble-verified transcripts, pre-build a cache with\n"
+            f"          'python scripts/cache_audio.py' and pass --use-audio-cache.\n"
+        )
     else:
-        print("  [SETUP] Skipped — OPENAI_API not set. Audio will use real-time fallback.\n")
+        parser.error(
+            "OPENAI_API not set in environment. Either set it to enable real-time "
+            "transcription (default), or pass --use-audio-cache to load a pre-built "
+            "cache from data/audio_cache/."
+        )
 
     # Register callbacks
     harness.on_frame(pipeline.on_frame)
     harness.on_audio(pipeline.on_audio)
 
+    # Start the idle watcher (no-op at speed >= 2.0).
+    pipeline.start_idle_worker()
+    if pipeline._speed < 2.0:
+        print(f"  [LIVE EMIT] Detectors emit directly to harness "
+              f"(idle_threshold={IDLE_THRESHOLD_SEC}s)\n")
+    else:
+        print(f"  [LIVE EMIT] speed={pipeline._speed}x ≥ 2 — idle watcher "
+              f"disabled, detectors emit directly\n")
+
     # STEP 3: Run pipeline
     print("  [PIPELINE] Starting harness...")
-    results = harness.run()
+    try:
+        results = harness.run()
+    finally:
+        # Stop the idle watcher.
+        pipeline.stop_idle_worker()
 
-    # No post-stream Mother. All events were emitted live via harness.emit_event()
-    # during the stream — the harness already populated results.events and
-    # mean/max_detection_delay_sec in harness.run() before returning.
+    # Rebuild results.events + delays from the harness's authoritative list.
+    rebuilt_events = []
+    rebuilt_delays = []
+    for ee in harness._emitted_events:
+        ev = dict(ee.event)
+        ev["detection_delay_sec"] = round(ee.detection_delay_sec, 3)
+        rebuilt_events.append(ev)
+        rebuilt_delays.append(ee.detection_delay_sec)
+    results.events = rebuilt_events
+    results.mean_detection_delay_sec = round(
+        sum(rebuilt_delays) / len(rebuilt_delays), 3,
+    ) if rebuilt_delays else 0.0
+    results.max_detection_delay_sec = round(
+        max(rebuilt_delays), 3
+    ) if rebuilt_delays else 0.0
 
     # Log run end
     events_by_type = {}

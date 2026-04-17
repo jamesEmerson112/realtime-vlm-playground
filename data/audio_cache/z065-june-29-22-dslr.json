@@ -1,0 +1,211 @@
+{
+  "video_name": "z065-june-29-22-dslr",
+  "video_relpath": "data/videos_full/z065-june-29-22-dslr/Export_py/Video_pitchshift.mp4",
+  "video_size": 50882233,
+  "video_mtime": 1696489810.0,
+  "audio_chunk_sec": 5.0,
+  "cached_at": "2026-04-16T16:07:08.967362Z",
+  "verify_ran": true,
+  "transcripts": {
+    "0.0": "All right. Let's do the one more time. Of course, the piece is",
+    "10.0": "Great. Please attack if you need any help.",
+    "25.0": "Now please detach the lens cover.",
+    "30.0": "Now, please attach the last column.",
+    "40.0": "Now please clear the camera.",
+    "80.0": "You can just suppress it a bit and then try to move it up.",
+    "85.0": "Slow it down.",
+    "120.0": "SD card",
+    "130.0": "Oh, yes.",
+    "150.0": "Just insert the battery.",
+    "155.0": "Okay",
+    "160.0": "Now please tune to the SD card.",
+    "180.0": "Stop the recording."
+  },
+  "audio_log": [
+    [
+      0.0,
+      5.0,
+      "All right. Let's do the one more time. Of course, the piece is"
+    ],
+    [
+      5.0,
+      10.0,
+      "NO_SPEECH"
+    ],
+    [
+      10.0,
+      15.0,
+      "Great. Please attack if you need any help."
+    ],
+    [
+      15.0,
+      20.0,
+      "NO_SPEECH"
+    ],
+    [
+      20.0,
+      25.0,
+      "NO_SPEECH"
+    ],
+    [
+      25.0,
+      30.0,
+      "Now please detach the lens cover."
+    ],
+    [
+      30.0,
+      35.0,
+      "Now, please attach the last column."
+    ],
+    [
+      35.0,
+      40.0,
+      "NO_SPEECH"
+    ],
+    [
+      40.0,
+      45.0,
+      "Now please clear the camera."
+    ],
+    [
+      45.0,
+      50.0,
+      "NO_SPEECH"
+    ],
+    [
+      50.0,
+      55.0,
+      "NO_SPEECH"
+    ],
+    [
+      55.0,
+      60.0,
+      "NO_SPEECH"
+    ],
+    [
+      60.0,
+      65.0,
+      "NO_SPEECH"
+    ],
+    [
+      65.0,
+      70.0,
+      "NO_SPEECH"
+    ],
+    [
+      70.0,
+      75.0,
+      "NO_SPEECH"
+    ],
+    [
+      75.0,
+      80.0,
+      "NO_SPEECH"
+    ],
+    [
+      80.0,
+      85.0,
+      "You can just suppress it a bit and then try to move it up."
+    ],
+    [
+      85.0,
+      90.0,
+      "Slow it down."
+    ],
+    [
+      90.0,
+      95.0,
+      "NO_SPEECH"
+    ],
+    [
+      95.0,
+      100.0,
+      "NO_SPEECH"
+    ],
+    [
+      100.0,
+      105.0,
+      "NO_SPEECH"
+    ],
+    [
+      105.0,
+      110.0,
+      "NO_SPEECH"
+    ],
+    [
+      110.0,
+      115.0,
+      "NO_SPEECH"
+    ],
+    [
+      115.0,
+      120.0,
+      "NO_SPEECH"
+    ],
+    [
+      120.0,
+      125.0,
+      "SD card"
+    ],
+    [
+      125.0,
+      130.0,
+      "NO_SPEECH"
+    ],
+    [
+      130.0,
+      135.0,
+      "Oh, yes."
+    ],
+    [
+      135.0,
+      140.0,
+      "NO_SPEECH"
+    ],
+    [
+      140.0,
+      145.0,
+      "NO_SPEECH"
+    ],
+    [
+      145.0,
+      150.0,
+      "NO_SPEECH"
+    ],
+    [
+      150.0,
+      155.0,
+      "Just insert the battery."
+    ],
+    [
+      155.0,
+      160.0,
+      "Okay"
+    ],
+    [
+      160.0,
+      165.0,
+      "Now please tune to the SD card."
+    ],
+    [
+      165.0,
+      170.0,
+      "NO_SPEECH"
+    ],
+    [
+      170.0,
+      175.0,
+      "NO_SPEECH"
+    ],
+    [
+      175.0,
+      180.0,
+      "NO_SPEECH"
+    ],
+    [
+      180.0,
+      183.08919482937227,
+      "Stop the recording."
+    ]
+  ]
+}

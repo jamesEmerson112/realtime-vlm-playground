@@ -40,34 +40,6 @@ from benchmark_audio import (
     call_openrouter_audio,
 )
 
-# Hallucination patterns to filter out (substring match, case-insensitive)
-HALLUCINATION_PATTERNS = [
-    # Boilerplate disclaimers (most prevalent — 19+ occurrences across multipass data)
-    "audio may be pitch-shifted",
-    "audio is muted",
-    "silence",
-    # URL/reference boilerplate
-    "for more information, visit www",
-    "for more information, please visit",
-    "video produced by",
-    "video provided by",
-    # Video ending boilerplate
-    "thank you for watching",
-    "thanks for watching",
-    "your class is over",
-    "the end",
-    # Prompt-echo / self-referential
-    "transcribe instructor speech",
-    "transcribe any speech",
-    "if there is no speech",
-    "now pitch-shift",
-    "please attend the conference",
-    # Page/document artifacts
-    "page 2 of",
-    "page 3 of",
-]
-
-
 # ---------------------------------------------------------------------------
 # UTILITIES
 # ---------------------------------------------------------------------------
@@ -81,11 +53,79 @@ def normalize_transcript(text: str) -> str:
     return text
 
 
+# Raw hallucination patterns — written naturally with punctuation.
+# Normalization is applied ONCE at import time (see _NORMALIZED_PATTERNS below)
+# so that patterns match input that has been stripped of punctuation.
+_RAW_HALLUCINATION_PATTERNS = [
+    # --- Boilerplate disclaimers (most prevalent — 19+ occurrences) ---
+    "audio may be pitch-shifted",
+    "audio is muted",
+    "silence",
+    # --- URL/reference boilerplate ---
+    "for more information, visit www",
+    "for more information, please visit",
+    "video produced by",
+    "video provided by",
+    # --- Video ending boilerplate ---
+    "thank you for watching",
+    "thanks for watching",
+    "your class is over",
+    "the end",
+    # --- Prompt-echo / self-referential ---
+    "transcribe instructor speech",
+    "transcribe any speech",
+    "if there is no speech",
+    "now pitch-shift",
+    "please attend the conference",
+    # --- Page/document artifacts ---
+    "page 2 of",
+    "page 3 of",
+
+    # --- YouTube boilerplate ---
+    "subscribe",
+    "like and subscribe",
+    "bell icon",
+    "comment below",
+    "share this video",
+    "don't forget to",
+    "hit that like",
+    "smash the like",
+
+    # --- URL / domain fragments (whisper fabricates on silence) ---
+    # Tightened to avoid false positives on real English words like "come" / "combined".
+    "visit www",
+    "http",
+    "dot com",
+    "dot org",
+    "dot net",
+
+    # --- Generic promo closers ---
+    "visit our website",
+    "check out our",
+    "stay tuned",
+    "see you next time",
+    "until next time",
+    "see you in the next",
+    "in the next video",
+]
+
+# Pre-compute normalized patterns ONCE at import time — this is the fix.
+# Without this, patterns with hyphens/commas never match normalized input.
+_NORMALIZED_PATTERNS = [normalize_transcript(p) for p in _RAW_HALLUCINATION_PATTERNS]
+
+# Keep the public name for any downstream imports (same content, punctuation-stripped).
+HALLUCINATION_PATTERNS = _NORMALIZED_PATTERNS
+
+
 def is_hallucination(text: str) -> bool:
-    """Check if transcript is a known hallucination / prompt echo."""
+    """Check if transcript is a known hallucination / prompt echo.
+
+    Both text and patterns are normalized the same way, so punctuation in
+    the pattern list doesn't cause false negatives.
+    """
     norm = normalize_transcript(text)
-    for pattern in HALLUCINATION_PATTERNS:
-        if pattern in norm:
+    for pattern in _NORMALIZED_PATTERNS:
+        if pattern and pattern in norm:
             return True
     # Very short non-word outputs
     if len(norm) <= 3 and norm not in ("no", "stop", "wait"):

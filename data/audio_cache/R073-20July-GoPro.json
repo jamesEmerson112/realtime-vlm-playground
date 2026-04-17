@@ -1,0 +1,243 @@
+{
+  "video_name": "R073-20July-GoPro",
+  "video_relpath": "data/videos_full/R073-20July-GoPro/Export_py/Video_pitchshift.mp4",
+  "video_size": 70628631,
+  "video_mtime": 1696489746.0,
+  "audio_chunk_sec": 5.0,
+  "cached_at": "2026-04-16T09:39:48.979609Z",
+  "verify_ran": true,
+  "transcripts": {
+    "0.0": "Okay. Change the battery.",
+    "30.0": "Now change the micro SD card.",
+    "70.0": "Anyway.",
+    "120.0": "Turn it up.",
+    "125.0": "Okay, turn it off.",
+    "155.0": "Take it back off.",
+    "165.0": "Put on the tripod.",
+    "185.0": "Between those two layers",
+    "200.0": "Now remove it.",
+    "205.0": "And you are."
+  },
+  "audio_log": [
+    [
+      0.0,
+      5.0,
+      "Okay. Change the battery."
+    ],
+    [
+      5.0,
+      10.0,
+      "NO_SPEECH"
+    ],
+    [
+      10.0,
+      15.0,
+      "NO_SPEECH"
+    ],
+    [
+      15.0,
+      20.0,
+      "NO_SPEECH"
+    ],
+    [
+      20.0,
+      25.0,
+      "NO_SPEECH"
+    ],
+    [
+      25.0,
+      30.0,
+      "NO_SPEECH"
+    ],
+    [
+      30.0,
+      35.0,
+      "Now change the micro SD card."
+    ],
+    [
+      35.0,
+      40.0,
+      "NO_SPEECH"
+    ],
+    [
+      40.0,
+      45.0,
+      "NO_SPEECH"
+    ],
+    [
+      45.0,
+      50.0,
+      "NO_SPEECH"
+    ],
+    [
+      50.0,
+      55.0,
+      "NO_SPEECH"
+    ],
+    [
+      55.0,
+      60.0,
+      "NO_SPEECH"
+    ],
+    [
+      60.0,
+      65.0,
+      "NO_SPEECH"
+    ],
+    [
+      65.0,
+      70.0,
+      "NO_SPEECH"
+    ],
+    [
+      70.0,
+      75.0,
+      "Anyway."
+    ],
+    [
+      75.0,
+      80.0,
+      "NO_SPEECH"
+    ],
+    [
+      80.0,
+      85.0,
+      "NO_SPEECH"
+    ],
+    [
+      85.0,
+      90.0,
+      "NO_SPEECH"
+    ],
+    [
+      90.0,
+      95.0,
+      "NO_SPEECH"
+    ],
+    [
+      95.0,
+      100.0,
+      "NO_SPEECH"
+    ],
+    [
+      100.0,
+      105.0,
+      "NO_SPEECH"
+    ],
+    [
+      105.0,
+      110.0,
+      "NO_SPEECH"
+    ],
+    [
+      110.0,
+      115.0,
+      "NO_SPEECH"
+    ],
+    [
+      115.0,
+      120.0,
+      "NO_SPEECH"
+    ],
+    [
+      120.0,
+      125.0,
+      "Turn it up."
+    ],
+    [
+      125.0,
+      130.0,
+      "Okay, turn it off."
+    ],
+    [
+      130.0,
+      135.0,
+      "NO_SPEECH"
+    ],
+    [
+      135.0,
+      140.0,
+      "NO_SPEECH"
+    ],
+    [
+      140.0,
+      145.0,
+      "NO_SPEECH"
+    ],
+    [
+      145.0,
+      150.0,
+      "NO_SPEECH"
+    ],
+    [
+      150.0,
+      155.0,
+      "NO_SPEECH"
+    ],
+    [
+      155.0,
+      160.0,
+      "Take it back off."
+    ],
+    [
+      160.0,
+      165.0,
+      "NO_SPEECH"
+    ],
+    [
+      165.0,
+      170.0,
+      "Put on the tripod."
+    ],
+    [
+      170.0,
+      175.0,
+      "NO_SPEECH"
+    ],
+    [
+      175.0,
+      180.0,
+      "NO_SPEECH"
+    ],
+    [
+      180.0,
+      185.0,
+      "NO_SPEECH"
+    ],
+    [
+      185.0,
+      190.0,
+      "Between those two layers"
+    ],
+    [
+      190.0,
+      195.0,
+      "NO_SPEECH"
+    ],
+    [
+      195.0,
+      200.0,
+      "NO_SPEECH"
+    ],
+    [
+      200.0,
+      205.0,
+      "Now remove it."
+    ],
+    [
+      205.0,
+      210.0,
+      "And you are."
+    ],
+    [
+      210.0,
+      215.0,
+      "NO_SPEECH"
+    ],
+    [
+      215.0,
+      215.98797676719124,
+      "NO_SPEECH"
+    ]
+  ]
+}

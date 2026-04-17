@@ -1,0 +1,212 @@
+{
+  "video_name": "R066-15July-Circuit-Breaker-part2",
+  "video_relpath": "data/videos_full/R066-15July-Circuit-Breaker-part2/Export_py/Video_pitchshift.mp4",
+  "video_size": 87934058,
+  "video_mtime": 1696489778.0,
+  "audio_chunk_sec": 5.0,
+  "cached_at": "2026-04-16T09:35:38.588079Z",
+  "verify_ran": true,
+  "transcripts": {
+    "0.0": "Please wait. Looking for a server heartbeat. Capturing.",
+    "5.0": "Go to the red toolbox and open the top compartment.",
+    "10.0": "Go to the right.",
+    "25.0": "Go to the right.",
+    "30.0": "Okay. The top part.",
+    "35.0": "find the",
+    "45.0": "Plug the new component into the socket.",
+    "60.0": "Okay, I'm going to close the panel of the circuit breaker.",
+    "65.0": "Switch to main page.",
+    "70.0": "Power on.",
+    "75.0": "Now press the reset button on the left side of the circuit box.",
+    "85.0": "Click it harder.",
+    "95.0": "Let's try that again.",
+    "100.0": "I'll turn the circuit breaker off.",
+    "110.0": "Take out",
+    "115.0": "Take out the thing.",
+    "130.0": "Who's the toolbox?",
+    "140.0": "Pick up the component from the wall of control.",
+    "160.0": "Turn on"
+  },
+  "audio_log": [
+    [
+      0.0,
+      5.0,
+      "Please wait. Looking for a server heartbeat. Capturing."
+    ],
+    [
+      5.0,
+      10.0,
+      "Go to the red toolbox and open the top compartment."
+    ],
+    [
+      10.0,
+      15.0,
+      "Go to the right."
+    ],
+    [
+      15.0,
+      20.0,
+      "NO_SPEECH"
+    ],
+    [
+      20.0,
+      25.0,
+      "NO_SPEECH"
+    ],
+    [
+      25.0,
+      30.0,
+      "Go to the right."
+    ],
+    [
+      30.0,
+      35.0,
+      "Okay. The top part."
+    ],
+    [
+      35.0,
+      40.0,
+      "find the"
+    ],
+    [
+      40.0,
+      45.0,
+      "NO_SPEECH"
+    ],
+    [
+      45.0,
+      50.0,
+      "Plug the new component into the socket."
+    ],
+    [
+      50.0,
+      55.0,
+      "NO_SPEECH"
+    ],
+    [
+      55.0,
+      60.0,
+      "NO_SPEECH"
+    ],
+    [
+      60.0,
+      65.0,
+      "Okay, I'm going to close the panel of the circuit breaker."
+    ],
+    [
+      65.0,
+      70.0,
+      "Switch to main page."
+    ],
+    [
+      70.0,
+      75.0,
+      "Power on."
+    ],
+    [
+      75.0,
+      80.0,
+      "Now press the reset button on the left side of the circuit box."
+    ],
+    [
+      80.0,
+      85.0,
+      "NO_SPEECH"
+    ],
+    [
+      85.0,
+      90.0,
+      "Click it harder."
+    ],
+    [
+      90.0,
+      95.0,
+      "NO_SPEECH"
+    ],
+    [
+      95.0,
+      100.0,
+      "Let's try that again."
+    ],
+    [
+      100.0,
+      105.0,
+      "I'll turn the circuit breaker off."
+    ],
+    [
+      105.0,
+      110.0,
+      "NO_SPEECH"
+    ],
+    [
+      110.0,
+      115.0,
+      "Take out"
+    ],
+    [
+      115.0,
+      120.0,
+      "Take out the thing."
+    ],
+    [
+      120.0,
+      125.0,
+      "NO_SPEECH"
+    ],
+    [
+      125.0,
+      130.0,
+      "NO_SPEECH"
+    ],
+    [
+      130.0,
+      135.0,
+      "Who's the toolbox?"
+    ],
+    [
+      135.0,
+      140.0,
+      "NO_SPEECH"
+    ],
+    [
+      140.0,
+      145.0,
+      "Pick up the component from the wall of control."
+    ],
+    [
+      145.0,
+      150.0,
+      "NO_SPEECH"
+    ],
+    [
+      150.0,
+      155.0,
+      "NO_SPEECH"
+    ],
+    [
+      155.0,
+      160.0,
+      "NO_SPEECH"
+    ],
+    [
+      160.0,
+      165.0,
+      "Turn on"
+    ],
+    [
+      165.0,
+      170.0,
+      "NO_SPEECH"
+    ],
+    [
+      170.0,
+      175.0,
+      "NO_SPEECH"
+    ],
+    [
+      175.0,
+      176.02397545967872,
+      "NO_SPEECH"
+    ]
+  ]
+}

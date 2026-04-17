@@ -1,0 +1,478 @@
+{
+  "video_name": "z067-june-29-22-gopro",
+  "video_relpath": "data/videos_full/z067-june-29-22-gopro/Export_py/Video_pitchshift.mp4",
+  "video_size": 107399872,
+  "video_mtime": 1696489754.0,
+  "audio_chunk_sec": 5.0,
+  "cached_at": "2026-04-16T16:17:03.917105Z",
+  "verify_ran": true,
+  "transcripts": {
+    "0.0": "Hello and thank you for agreeing to participate in our study interview.",
+    "5.0": "You'll see a GoPro action camera. We'll be using it for this task.",
+    "10.0": "First, please change the battery in the GoPro.",
+    "20.0": "You will find the value of your weapon on there.",
+    "25.0": "Right side of the GoPro.",
+    "30.0": "To open it, please slide it down on the notch.",
+    "35.0": "To open it, squeeze up.",
+    "45.0": "On the lower part of the right side.",
+    "50.0": "Notice a small hole in the middle.",
+    "55.0": "on the lower part of the right side.",
+    "75.0": "Please put in the no battery.",
+    "85.0": "Next, please.",
+    "90.0": "Please change the microSD card in the GoPro.",
+    "105.0": "Please put in the noise.",
+    "130.0": "Please turn on the camera.",
+    "145.0": "Please stop the recording.",
+    "155.0": "Please use the button on the left.",
+    "160.0": "Please wait for the countdown.",
+    "175.0": "Please stop the count.",
+    "185.0": "Next, please mount.",
+    "190.0": "Shoulder strap to the GoPro.",
+    "205.0": "First we unscrew the nut.",
+    "225.0": "Please remove the screw from the GoPro and slide the GoPro in.",
+    "230.0": "into the mounting bracket.",
+    "235.0": "...between the brackets.",
+    "250.0": "A bit backwards.",
+    "275.0": "Next, please change the mount of the GoPro from the shoulder strap to the correct one.",
+    "345.0": "Please change the mount from the tripod to the handheld mount.",
+    "410.0": "Next, please remove the mouthpiece.",
+    "425.0": "Thank you very much."
+  },
+  "audio_log": [
+    [
+      0.0,
+      5.0,
+      "Hello and thank you for agreeing to participate in our study interview."
+    ],
+    [
+      5.0,
+      10.0,
+      "You'll see a GoPro action camera. We'll be using it for this task."
+    ],
+    [
+      10.0,
+      15.0,
+      "First, please change the battery in the GoPro."
+    ],
+    [
+      15.0,
+      20.0,
+      "NO_SPEECH"
+    ],
+    [
+      20.0,
+      25.0,
+      "You will find the value of your weapon on there."
+    ],
+    [
+      25.0,
+      30.0,
+      "Right side of the GoPro."
+    ],
+    [
+      30.0,
+      35.0,
+      "To open it, please slide it down on the notch."
+    ],
+    [
+      35.0,
+      40.0,
+      "To open it, squeeze up."
+    ],
+    [
+      40.0,
+      45.0,
+      "NO_SPEECH"
+    ],
+    [
+      45.0,
+      50.0,
+      "On the lower part of the right side."
+    ],
+    [
+      50.0,
+      55.0,
+      "Notice a small hole in the middle."
+    ],
+    [
+      55.0,
+      60.0,
+      "on the lower part of the right side."
+    ],
+    [
+      60.0,
+      65.0,
+      "NO_SPEECH"
+    ],
+    [
+      65.0,
+      70.0,
+      "NO_SPEECH"
+    ],
+    [
+      70.0,
+      75.0,
+      "NO_SPEECH"
+    ],
+    [
+      75.0,
+      80.0,
+      "Please put in the no battery."
+    ],
+    [
+      80.0,
+      85.0,
+      "NO_SPEECH"
+    ],
+    [
+      85.0,
+      90.0,
+      "Next, please."
+    ],
+    [
+      90.0,
+      95.0,
+      "Please change the microSD card in the GoPro."
+    ],
+    [
+      95.0,
+      100.0,
+      "NO_SPEECH"
+    ],
+    [
+      100.0,
+      105.0,
+      "NO_SPEECH"
+    ],
+    [
+      105.0,
+      110.0,
+      "Please put in the noise."
+    ],
+    [
+      110.0,
+      115.0,
+      "NO_SPEECH"
+    ],
+    [
+      115.0,
+      120.0,
+      "NO_SPEECH"
+    ],
+    [
+      120.0,
+      125.0,
+      "NO_SPEECH"
+    ],
+    [
+      125.0,
+      130.0,
+      "NO_SPEECH"
+    ],
+    [
+      130.0,
+      135.0,
+      "Please turn on the camera."
+    ],
+    [
+      135.0,
+      140.0,
+      "NO_SPEECH"
+    ],
+    [
+      140.0,
+      145.0,
+      "NO_SPEECH"
+    ],
+    [
+      145.0,
+      150.0,
+      "Please stop the recording."
+    ],
+    [
+      150.0,
+      155.0,
+      "NO_SPEECH"
+    ],
+    [
+      155.0,
+      160.0,
+      "Please use the button on the left."
+    ],
+    [
+      160.0,
+      165.0,
+      "Please wait for the countdown."
+    ],
+    [
+      165.0,
+      170.0,
+      "NO_SPEECH"
+    ],
+    [
+      170.0,
+      175.0,
+      "NO_SPEECH"
+    ],
+    [
+      175.0,
+      180.0,
+      "Please stop the count."
+    ],
+    [
+      180.0,
+      185.0,
+      "NO_SPEECH"
+    ],
+    [
+      185.0,
+      190.0,
+      "Next, please mount."
+    ],
+    [
+      190.0,
+      195.0,
+      "Shoulder strap to the GoPro."
+    ],
+    [
+      195.0,
+      200.0,
+      "NO_SPEECH"
+    ],
+    [
+      200.0,
+      205.0,
+      "NO_SPEECH"
+    ],
+    [
+      205.0,
+      210.0,
+      "First we unscrew the nut."
+    ],
+    [
+      210.0,
+      215.0,
+      "NO_SPEECH"
+    ],
+    [
+      215.0,
+      220.0,
+      "NO_SPEECH"
+    ],
+    [
+      220.0,
+      225.0,
+      "NO_SPEECH"
+    ],
+    [
+      225.0,
+      230.0,
+      "Please remove the screw from the GoPro and slide the GoPro in."
+    ],
+    [
+      230.0,
+      235.0,
+      "into the mounting bracket."
+    ],
+    [
+      235.0,
+      240.0,
+      "...between the brackets."
+    ],
+    [
+      240.0,
+      245.0,
+      "NO_SPEECH"
+    ],
+    [
+      245.0,
+      250.0,
+      "NO_SPEECH"
+    ],
+    [
+      250.0,
+      255.0,
+      "A bit backwards."
+    ],
+    [
+      255.0,
+      260.0,
+      "NO_SPEECH"
+    ],
+    [
+      260.0,
+      265.0,
+      "NO_SPEECH"
+    ],
+    [
+      265.0,
+      270.0,
+      "NO_SPEECH"
+    ],
+    [
+      270.0,
+      275.0,
+      "NO_SPEECH"
+    ],
+    [
+      275.0,
+      280.0,
+      "Next, please change the mount of the GoPro from the shoulder strap to the correct one."
+    ],
+    [
+      280.0,
+      285.0,
+      "NO_SPEECH"
+    ],
+    [
+      285.0,
+      290.0,
+      "NO_SPEECH"
+    ],
+    [
+      290.0,
+      295.0,
+      "NO_SPEECH"
+    ],
+    [
+      295.0,
+      300.0,
+      "NO_SPEECH"
+    ],
+    [
+      300.0,
+      305.0,
+      "NO_SPEECH"
+    ],
+    [
+      305.0,
+      310.0,
+      "NO_SPEECH"
+    ],
+    [
+      310.0,
+      315.0,
+      "NO_SPEECH"
+    ],
+    [
+      315.0,
+      320.0,
+      "NO_SPEECH"
+    ],
+    [
+      320.0,
+      325.0,
+      "NO_SPEECH"
+    ],
+    [
+      325.0,
+      330.0,
+      "NO_SPEECH"
+    ],
+    [
+      330.0,
+      335.0,
+      "NO_SPEECH"
+    ],
+    [
+      335.0,
+      340.0,
+      "NO_SPEECH"
+    ],
+    [
+      340.0,
+      345.0,
+      "NO_SPEECH"
+    ],
+    [
+      345.0,
+      350.0,
+      "Please change the mount from the tripod to the handheld mount."
+    ],
+    [
+      350.0,
+      355.0,
+      "NO_SPEECH"
+    ],
+    [
+      355.0,
+      360.0,
+      "NO_SPEECH"
+    ],
+    [
+      360.0,
+      365.0,
+      "NO_SPEECH"
+    ],
+    [
+      365.0,
+      370.0,
+      "NO_SPEECH"
+    ],
+    [
+      370.0,
+      375.0,
+      "NO_SPEECH"
+    ],
+    [
+      375.0,
+      380.0,
+      "NO_SPEECH"
+    ],
+    [
+      380.0,
+      385.0,
+      "NO_SPEECH"
+    ],
+    [
+      385.0,
+      390.0,
+      "NO_SPEECH"
+    ],
+    [
+      390.0,
+      395.0,
+      "NO_SPEECH"
+    ],
+    [
+      395.0,
+      400.0,
+      "NO_SPEECH"
+    ],
+    [
+      400.0,
+      405.0,
+      "NO_SPEECH"
+    ],
+    [
+      405.0,
+      410.0,
+      "NO_SPEECH"
+    ],
+    [
+      410.0,
+      415.0,
+      "Next, please remove the mouthpiece."
+    ],
+    [
+      415.0,
+      420.0,
+      "NO_SPEECH"
+    ],
+    [
+      420.0,
+      425.0,
+      "NO_SPEECH"
+    ],
+    [
+      425.0,
+      430.0,
+      "Thank you very much."
+    ],
+    [
+      430.0,
+      435.0,
+      "NO_SPEECH"
+    ]
+  ]
+}
